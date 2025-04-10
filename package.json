@@ -1,0 +1,41 @@
+{
+  "name": "electron-esbuild-template",
+  "version": "2.0.0",
+  "description": "Template for electron apps with esbuild",
+  "main": "build/main.js",
+  "scripts": {
+    "watch": "node build.mjs --watch --port 3000 --host 127.0.0.1",
+    "dev": "concurrently -k \"npm:watch\" \"wait-on http://127.0.0.1:3000 && DEV=true nodemon -w build --exec electron build/main.js\"",
+    "prestart": "npm run build",
+    "start": "electron ./build/main.js",
+    "build": "node build.mjs && electron-builder",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "build": {
+    "files": [
+      "./build/**/*"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shyguy1412/electron-esbuild-template.git"
+  },
+  "author": "Shy",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/shyguy1412/electron-esbuild-template/issues"
+  },
+  "homepage": "https://github.com/shyguy1412/electron-esbuild-template#readme",
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "electron": "^35.1.5",
+    "electron-builder": "^26.0.12",
+    "esbuild": "^0.25.2",
+    "nodemon": "^3.1.9",
+    "normalize.css": "^8.0.1",
+    "preact": "^10.26.5",
+    "typescript": "^5.8.3",
+    "wait-on": "^8.0.3",
+    "typescript-plugin-css-modules": "^5.1.0"
+  }
+}
