@@ -1,0 +1,19 @@
+[package]
+name = "lce-ts-bindings"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+crate-type = ["cdylib"]
+
+
+[tslink]
+node = "./dist/index.node"
+snake_case_naming = "methods"
+
+[dependencies]
+node-bindgen = "6.1.0"
+tslink = "0.3.0"
+
+[build-dependencies]
+node-bindgen = {version = "6.0", default-features = false, features = ["build"]}

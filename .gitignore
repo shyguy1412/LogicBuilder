@@ -131,3 +131,5 @@ dist
 
 # esbuild output
 build
+
+*/target/

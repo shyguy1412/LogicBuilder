@@ -53,7 +53,7 @@ function createWindow() {
         mainWindow.loadURL('http://127.0.0.1:3000');
     }
     else {
-        mainWindow.loadFile(path.join(__dirname, 'main.html'));
+        mainWindow.loadFile(path.join(__dirname, 'index.html'));
     }
 
     // Open the DevTools.

@@ -5,8 +5,7 @@
   "main": "build/main.js",
   "scripts": {
     "watch": "node build.mjs --watch --port 3000 --host 127.0.0.1",
-    "dev": "concurrently -k \"npm:watch\" \"wait-on http://127.0.0.1:3000 && DEV=true nodemon -w build --exec electron build/main.js\"",
-    "prestart": "npm run build",
+    "dev": "concurrently -k \"npm:watch\" \"wait-on http://127.0.0.1:3000 && DEV=true nodemon -w build/main.js -w build/preload.js --exec electron build/main.js\"",
     "start": "electron ./build/main.js",
     "build": "node build.mjs && electron-builder",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -35,7 +34,10 @@
     "normalize.css": "^8.0.1",
     "preact": "^10.26.5",
     "typescript": "^5.8.3",
+    "typescript-plugin-css-modules": "^5.1.0",
     "wait-on": "^8.0.3",
-    "typescript-plugin-css-modules": "^5.1.0"
+    "@fortawesome/free-regular-svg-icons": "^6.4.2",
+    "@fortawesome/free-solid-svg-icons": "^6.4.2",
+    "@fortawesome/react-fontawesome": "^0.2.0"
   }
 }
