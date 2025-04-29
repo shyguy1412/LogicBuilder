@@ -53,9 +53,13 @@ function SidebarComponent({ menus }: Props) {
     console.log("VIEW CONTAINER RERENDER");
 
     const currentWidth = useSelector(width, (state) => state);
+    const view = View();
+
+    if (!view) return false;
+    
     return (
       <div ref={ref} style={{ width: `clamp(5em, ${currentWidth}px, 20em)` }}>
-        <View></View>
+        {view}
       </div>
     );
   }, [View]);
@@ -105,7 +109,7 @@ const MenuItem = memo(({ menu, router }: MenuItemProps) => {
     <div
       data-active={route == menu.name ? "" : undefined}
       class={style.menuitem}
-      onClick={() => setRoute(menu.name)}
+      onClick={() => setRoute(menu.name == route ? "@None" : menu.name)}
     >
       {h(menu.icon, {})}
     </div>
