@@ -9,10 +9,16 @@
   font-weight: 300;
   font-style: normal;
 
-  overflow: hidden;
   display: flex;
   flex-direction: column;
 }
+
+.view {
+  height: 100%;
+  width: 100%;
+  display: flex;
+}
+
 /* title bar */
 .app > :first-child {
   border-bottom: 1px solid var(--clr-primary-a10);
@@ -21,12 +27,6 @@
 /* app icon */
 .app > :first-child > :first-child {
   color: var(--clr-primary-a0);
-}
-
-.view {
-  height: 100%;
-  width: 100%;
-  display: flex;
 }
 
 /* Sidebar */
