@@ -41,18 +41,19 @@ function SidebarComponent({ menus }: Props) {
   const width = useMemo(() => createAtom(50), []);
 
   const resize = (startWidth: number, startX: number) => (ev: MouseEvent) => {
-    // setWidth(startWidth - ev.clientX - startX);
     width.set(startWidth - (startX - ev.clientX));
   };
 
-  const ViewContainer = ({ view }: { view: FunctionComponent }) => {
+  const ViewContainer = useCallback(() => {
+    console.log("VIEW CONTAINER RERENDER");
+
     const currentWidth = useSelector(width, (state) => state);
     return (
       <div style={{ width: `clamp(5em, ${currentWidth}px, 20em)` }}>
-        {h(view, {})}
+        <View></View>
       </div>
     );
-  };
+  }, [View]);
 
   return (
     <div class={style.sidebar}>
@@ -63,7 +64,7 @@ function SidebarComponent({ menus }: Props) {
           </div>
         ))}
       </div>
-      <ViewContainer view={View}></ViewContainer>
+      <ViewContainer></ViewContainer>
       <div
         onMouseDown={(event) => {
           const movehandler = resize(width.get(), event.clientX);
