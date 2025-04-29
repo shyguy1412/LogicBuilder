@@ -34,7 +34,7 @@ function SidebarComponent({ menus }: Props) {
       {} as RouteTable,
     );
     return createRouter(routes, menus[0][0].name);
-  }, []);
+  }, [menus]);
 
   const { View } = useRouter(Router);
 
@@ -42,9 +42,12 @@ function SidebarComponent({ menus }: Props) {
 
   const ref = useRef<HTMLDivElement>(null);
 
-  const resize = (startWidth: number, startX: number) => (ev: MouseEvent) => {
-    width.set(startWidth - (startX - ev.clientX));
-  };
+  const resize = useCallback(
+    (startWidth: number, startX: number) => (ev: MouseEvent) => {
+      width.set(startWidth - (startX - ev.clientX));
+    },
+    [],
+  );
 
   const ViewContainer = useCallback(() => {
     console.log("VIEW CONTAINER RERENDER");
@@ -104,7 +107,7 @@ const MenuItem = memo(({ menu, router }: MenuItemProps) => {
       class={style.menuitem}
       onClick={() => setRoute(menu.name)}
     >
-      <menu.icon />
+      {h(menu.icon, {})}
     </div>
   );
 });
