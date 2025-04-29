@@ -11,6 +11,8 @@ export type Router<R extends string> = ReturnType<
 >;
 export type RouteTable<R extends string = string> = { [route in R]: View };
 
+const None = () => false;
+
 export function createRouter<R extends RouteTable>(
   routeTable: R,
   initial: keyof R,
@@ -21,7 +23,7 @@ export function createRouter<R extends RouteTable>(
     on: {
       setRoute: (_, event: { route: keyof R; }) => ({
         route: event.route,
-        view: routeTable[event.route],
+        view: routeTable[event.route] ?? None,
       }),
     },
   });
