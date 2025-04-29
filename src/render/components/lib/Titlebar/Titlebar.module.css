@@ -1,15 +1,18 @@
 .titlebar {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  font-size: 1em;
   width: 100%;
-  height: 2em;
+  height: 2.3em;
 
-  background-color: var(--clr-surface-a0);
-  border-bottom: 1px solid var(--clr-primary-a10);
+  user-select: none;
 
   /*Make window draggable*/
   -webkit-app-region: drag;
+}
+
+/* inherit BG so the brighten filter can apply */
+.titlebar, .titlebar div {
+  background-color: inherit;
 }
 
 .titlebar > div {
@@ -19,23 +22,21 @@
   height: 100%;
 }
 
+/* Icon */
 .titlebar > div:first-child {
-  justify-content: start;
+  width: 2.3em;
+  font-size: 1.3em;
 }
 
-.titlebar > div:last-child {
-  justify-content: end;
-}
-
+/* Title */
 .titlebar > div:nth-child(2) {
   font-weight: 400;
   font-size: 1.1em;
 }
 
-.titlebar > div:first-child > * {
-  color: var(--clr-primary-a10);
-  width: 3em;
-  font-size: 1.1em;
+/* Control buttons */
+.titlebar > div:last-child {
+  justify-content: end;
 }
 
 .titlebar > div:last-child > div {
@@ -43,16 +44,22 @@
   justify-content: center;
   align-items: center;
   height: 100%;
-  font-size: 0.9em;
+  font-size: 0.75em;
   aspect-ratio: 1/1;
   /* Make buttons still work  */
   -webkit-app-region: no-drag;
 }
 
-.titlebar > div:last-child > div:hover {
-  background-color: var(--clr-surface-a10);
+.titlebar > div:last-child > div:hover:not(:last-child) {
+  filter: brightness(160%);
+}
+
+@media (prefers-color-scheme: light) {
+  .titlebar > div:last-child > div:hover:not(:last-child) {
+    filter: brightness(80%);
+  }
 }
 
 .titlebar > div:last-child > div:last-child:hover {
-  background-color: var(--clr-red);
+  background-color: crimson;
 }

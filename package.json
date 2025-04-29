@@ -26,21 +26,20 @@
   },
   "homepage": "https://github.com/shyguy1412/electron-esbuild-template#readme",
   "devDependencies": {
-    "@fortawesome/free-regular-svg-icons": "^6.4.2",
-    "@fortawesome/free-solid-svg-icons": "^6.4.2",
-    "@fortawesome/react-fontawesome": "^0.2.0",
     "concurrently": "^9.1.2",
-    "electron": "^35.1.5",
     "electron-builder": "^26.0.12",
     "esbuild": "^0.25.2",
     "nodemon": "^3.1.9",
-    "normalize.css": "^8.0.1",
-    "preact": "^10.26.5",
     "typescript": "^5.8.3",
     "typescript-plugin-css-modules": "^5.1.0",
     "wait-on": "^8.0.3"
   },
   "dependencies": {
-    "@xstate/store": "^3.5.1"
+    "@xstate/store": "^3.5.1",
+    "electron": "^35.1.5",
+    "normalize.css": "^8.0.1",
+    "preact": "^10.26.5",
+    "react-icons": "^5.5.0",
+    "react-resizable-panels": "^2.1.9"
   }
 }

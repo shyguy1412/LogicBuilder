@@ -1,8 +1,4 @@
 :root {
-  /** Base colors */
-  --clr-foreground-a0: #ffffff;
-  --clr-background-a0: #000000;
-
   /** Theme primary colors */
   --clr-primary-a0: #80ff00;
   --clr-primary-a10: #93ff40;
@@ -19,6 +15,14 @@
   --clr-surface-a40: #717171;
   --clr-surface-a50: #8b8b8b;
 
+  /** Theme foreground colors */
+  --clr-foreground-a0: #ffffff;
+  --clr-foreground-a10: #f0f0f0;
+  --clr-foreground-a20: #e1e1e1;
+  --clr-foreground-a30: #d3d3d3;
+  --clr-foreground-a40: #c5c5c5;
+  --clr-foreground-a50: #b6b6b6;
+
   /** Theme tonal surface colors */
   --clr-surface-tonal-a0: #1e2617;
   --clr-surface-tonal-a10: #333a2c;
@@ -32,10 +36,6 @@
 
 @media (prefers-color-scheme: light) {
   :root {
-    /** Base colors */
-    --clr-foreground-a0: #000000;
-    --clr-background-a0: #ffffff;
-
     /** Theme primary colors */
     --clr-primary-a0: #03a62a;
     --clr-primary-a10: #2da237;
@@ -52,6 +52,14 @@
     --clr-surface-a40: #c5c5c5;
     --clr-surface-a50: #b6b6b6;
 
+    /** Theme foreground colors */
+    --clr-foreground-a0: #121212;
+    --clr-foreground-a10: #282828;
+    --clr-foreground-a20: #3f3f3f;
+    --clr-foreground-a30: #575757;
+    --clr-foreground-a40: #717171;
+    --clr-foreground-a50: #8b8b8b;
+
     /** Theme tonal surface colors */
     --clr-surface-tonal-a0: #ebf7e9;
     --clr-surface-tonal-a10: #dfe9dd;
@@ -64,17 +72,7 @@
 
 html,
 body {
+  user-select: none;
   width: 100%;
   height: 100%;
-  background-color: var(--clr-surface-a0);
-  color: var(--clr-foreground-a0);
-  font-family: "Roboto", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 300;
-  font-style: normal;
-}
-
-body {
-  display: flex;
-  flex-direction: column;
 }

@@ -1,11 +1,8 @@
-import { FunctionComponent, h } from "preact";
-import style from "./View.module.css";
-import { createAtom, createStore } from "@xstate/store";
+import { createStore } from "@xstate/store";
 import { useSelector } from "@xstate/store/react";
+import { h } from "preact";
+import { useCallback, useMemo } from "preact/hooks";
 
-type Props<R extends string> = {
-  router: Router<R>;
-};
 
 export type View = () => h.JSX.Element;
 export type Router<R extends string> = ReturnType<
@@ -19,7 +16,7 @@ export function createRouter<R extends RouteTable>(
   const store = createStore({
     context: { route: initial, view: router[initial] },
     on: {
-      setRoute: (context, event: { route: keyof R }) => ({
+      setRoute: (_, event: { route: keyof R; }) => ({
         route: event.route,
         view: router[event.route],
       }),
@@ -31,20 +28,8 @@ export function createRouter<R extends RouteTable>(
 
 export function useRouter<R extends string>(router: Router<R>) {
   return {
-    setRoute: router.trigger.setRoute,
+    setRoute: useCallback((route: R) => router.trigger.setRoute({ route }), [router]),
     route: useSelector(router, (state) => state.context.route),
+    View: useSelector(router, (state) => state.context.view)
   };
-}
-
-export function View<R extends string>({ router }: Props<R>) {
-  const SelectedView: View = useSelector(
-    router,
-    (state) => state.context.view,
-  );
-
-  return (
-    <div class={style.view}>
-      <SelectedView></SelectedView>
-    </div>
-  );
 }

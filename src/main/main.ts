@@ -38,7 +38,7 @@ function createMenu(): Menu {
         },
         {
           label: i18n.t("Exit"),
-          accelerator: "esc",
+          // accelerator: "esc",
           click: () => {
             app.quit();
           },

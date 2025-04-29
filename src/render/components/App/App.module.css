@@ -1,18 +1,50 @@
 .app {
   height: 100%;
   width: 100%;
+
+  background-color: var(--clr-surface-a0);
+  color: var(--clr-foreground-a0);
+  font-family: "Roboto", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
+
   overflow: hidden;
-  justify-content: center;
-  align-items: center;
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 1fr 1.5em;
-}
-.app > :nth-child(1) {
   display: flex;
-  height: 100%;
+  flex-direction: column;
+}
+/* title bar */
+.app > :first-child {
+  border-bottom: 1px solid var(--clr-primary-a10);
 }
 
-.app > :nth-child(2) {
+/* app icon */
+.app > :first-child > :first-child {
+  color: var(--clr-primary-a0);
+}
+
+.view {
+  height: 100%;
+  width: 100%;
+  display: flex;
+}
+
+/* Sidebar */
+.view > :nth-child(1) > :nth-child(1) {
+  color: var(--clr-surface-a30);
+}
+
+.view > :nth-child(1) > :not(:last-child) {
+  border-right: 1px solid var(--clr-primary-a10);
+
+}
+
+.view > :nth-child(1) > :nth-child(1) > div > [data-active],
+.view > :nth-child(1) > :nth-child(1) > div > :hover {
+  color: var(--clr-primary-a0);
+}
+
+/* Info Bar */
+.app > :last-child {
   border-top: 1px solid var(--clr-primary-a10);
 }
