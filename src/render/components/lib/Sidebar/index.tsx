@@ -1,6 +1,6 @@
 import { FunctionComponent, h } from "preact";
 import style from "./Sidebar.module.css";
-import { useCallback, useMemo, useState } from "preact/hooks";
+import { useCallback, useMemo, useRef, useState } from "preact/hooks";
 import {
   createRouter,
   Router,
@@ -40,6 +40,8 @@ function SidebarComponent({ menus }: Props) {
 
   const width = useMemo(() => createAtom(50), []);
 
+  const ref = useRef<HTMLDivElement>(null);
+
   const resize = (startWidth: number, startX: number) => (ev: MouseEvent) => {
     width.set(startWidth - (startX - ev.clientX));
   };
@@ -49,7 +51,7 @@ function SidebarComponent({ menus }: Props) {
 
     const currentWidth = useSelector(width, (state) => state);
     return (
-      <div style={{ width: `clamp(5em, ${currentWidth}px, 20em)` }}>
+      <div ref={ref} style={{ width: `clamp(5em, ${currentWidth}px, 20em)` }}>
         <View></View>
       </div>
     );
@@ -67,7 +69,10 @@ function SidebarComponent({ menus }: Props) {
       <ViewContainer></ViewContainer>
       <div
         onMouseDown={(event) => {
-          const movehandler = resize(width.get(), event.clientX);
+          const movehandler = resize(
+            ref.current ? ref.current.clientWidth : width.get(),
+            event.clientX,
+          );
           window.addEventListener("mousemove", movehandler);
           window.addEventListener("mouseup", () => {
             document.body.style.cursor = "";
