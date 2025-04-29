@@ -1,0 +1,18 @@
+.app {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  justify-content: center;
+  align-items: center;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 1.5em;
+}
+.app > :nth-child(1) {
+  display: flex;
+  height: 100%;
+}
+
+.app > :nth-child(2) {
+  border-top: 1px solid var(--clr-primary-a10);
+}

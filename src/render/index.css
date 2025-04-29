@@ -1,78 +1,80 @@
 :root {
-    /** Base colors */
-    --clr-dark-a0: #000000;
-    --clr-light-a0: #ffffff;
+  /** Base colors */
+  --clr-foreground-a0: #ffffff;
+  --clr-background-a0: #000000;
 
-    /** Theme primary colors */
-    --clr-primary-a0: #80ff00;
-    --clr-primary-a10: #93ff40;
-    --clr-primary-a20: #a5ff5f;
-    --clr-primary-a30: #b4ff79;
-    --clr-primary-a40: #c3ff91;
-    --clr-primary-a50: #d0ffa7;
+  /** Theme primary colors */
+  --clr-primary-a0: #80ff00;
+  --clr-primary-a10: #93ff40;
+  --clr-primary-a20: #a5ff5f;
+  --clr-primary-a30: #b4ff79;
+  --clr-primary-a40: #c3ff91;
+  --clr-primary-a50: #d0ffa7;
 
-    /** Theme surface colors */
-    --clr-surface-a0: #121212;
-    --clr-surface-a10: #282828;
-    --clr-surface-a20: #3f3f3f;
-    --clr-surface-a30: #575757;
-    --clr-surface-a40: #717171;
-    --clr-surface-a50: #8b8b8b;
+  /** Theme surface colors */
+  --clr-surface-a0: #121212;
+  --clr-surface-a10: #282828;
+  --clr-surface-a20: #3f3f3f;
+  --clr-surface-a30: #575757;
+  --clr-surface-a40: #717171;
+  --clr-surface-a50: #8b8b8b;
 
-    /** Theme tonal surface colors */
-    --clr-surface-tonal-a0: #1e2617;
-    --clr-surface-tonal-a10: #333a2c;
-    --clr-surface-tonal-a20: #495043;
-    --clr-surface-tonal-a30: #61675b;
-    --clr-surface-tonal-a40: #797e74;
-    --clr-surface-tonal-a50: #92978e;
+  /** Theme tonal surface colors */
+  --clr-surface-tonal-a0: #1e2617;
+  --clr-surface-tonal-a10: #333a2c;
+  --clr-surface-tonal-a20: #495043;
+  --clr-surface-tonal-a30: #61675b;
+  --clr-surface-tonal-a40: #797e74;
+  --clr-surface-tonal-a50: #92978e;
 
-    --clr-red: #f1003c;
-
-
+  --clr-red: #f1003c;
 }
 
 @media (prefers-color-scheme: light) {
-    :root {
-        /** Base colors */
-        --clr-dark-a0: #000000;
-        --clr-light-a0: #ffffff;
+  :root {
+    /** Base colors */
+    --clr-foreground-a0: #000000;
+    --clr-background-a0: #ffffff;
 
-        /** Theme primary colors */
-        --clr-primary-a0: #03a62a;
-        --clr-primary-a10: #2da237;
-        --clr-primary-a20: #409e42;
-        --clr-primary-a30: #4d9a4c;
-        --clr-primary-a40: #599656;
-        --clr-primary-a50: #62925f;
+    /** Theme primary colors */
+    --clr-primary-a0: #03a62a;
+    --clr-primary-a10: #2da237;
+    --clr-primary-a20: #409e42;
+    --clr-primary-a30: #4d9a4c;
+    --clr-primary-a40: #599656;
+    --clr-primary-a50: #62925f;
 
-        /** Theme surface colors */
-        --clr-surface-a0: #ffffff;
-        --clr-surface-a10: #f0f0f0;
-        --clr-surface-a20: #e1e1e1;
-        --clr-surface-a30: #d3d3d3;
-        --clr-surface-a40: #c5c5c5;
-        --clr-surface-a50: #b6b6b6;
+    /** Theme surface colors */
+    --clr-surface-a0: #ffffff;
+    --clr-surface-a10: #f0f0f0;
+    --clr-surface-a20: #e1e1e1;
+    --clr-surface-a30: #d3d3d3;
+    --clr-surface-a40: #c5c5c5;
+    --clr-surface-a50: #b6b6b6;
 
-        /** Theme tonal surface colors */
-        --clr-surface-tonal-a0: #ebf7e9;
-        --clr-surface-tonal-a10: #dfe9dd;
-        --clr-surface-tonal-a20: #d2dbd1;
-        --clr-surface-tonal-a30: #c6cec5;
-        --clr-surface-tonal-a40: #bac0b9;
-        --clr-surface-tonal-a50: #aeb3ad;
-
-    }
+    /** Theme tonal surface colors */
+    --clr-surface-tonal-a0: #ebf7e9;
+    --clr-surface-tonal-a10: #dfe9dd;
+    --clr-surface-tonal-a20: #d2dbd1;
+    --clr-surface-tonal-a30: #c6cec5;
+    --clr-surface-tonal-a40: #bac0b9;
+    --clr-surface-tonal-a50: #aeb3ad;
+  }
 }
 
 html,
 body {
-    width: 100%;
-    height: 100%;
-    background-color: var(--clr-surface-a0);
-    color: var(--clr-light-a0);
-    font-family: "Roboto", sans-serif;
-    font-optical-sizing: auto;
-    font-weight: 300;
-    font-style: normal;
+  width: 100%;
+  height: 100%;
+  background-color: var(--clr-surface-a0);
+  color: var(--clr-foreground-a0);
+  font-family: "Roboto", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
 }

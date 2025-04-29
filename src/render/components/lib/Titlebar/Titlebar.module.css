@@ -1,0 +1,58 @@
+.titlebar {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  font-size: 1em;
+  width: 100%;
+  height: 2em;
+
+  background-color: var(--clr-surface-a0);
+  border-bottom: 1px solid var(--clr-primary-a10);
+
+  /*Make window draggable*/
+  -webkit-app-region: drag;
+}
+
+.titlebar > div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.titlebar > div:first-child {
+  justify-content: start;
+}
+
+.titlebar > div:last-child {
+  justify-content: end;
+}
+
+.titlebar > div:nth-child(2) {
+  font-weight: 400;
+  font-size: 1.1em;
+}
+
+.titlebar > div:first-child > * {
+  color: var(--clr-primary-a10);
+  width: 3em;
+  font-size: 1.1em;
+}
+
+.titlebar > div:last-child > div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  font-size: 0.9em;
+  aspect-ratio: 1/1;
+  /* Make buttons still work  */
+  -webkit-app-region: no-drag;
+}
+
+.titlebar > div:last-child > div:hover {
+  background-color: var(--clr-surface-a10);
+}
+
+.titlebar > div:last-child > div:last-child:hover {
+  background-color: var(--clr-red);
+}
