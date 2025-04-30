@@ -1,11 +1,6 @@
 import { h } from "preact";
 import style from "./Sidebar.module.css";
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-} from "preact/hooks";
+import { useCallback, useEffect, useMemo, useRef } from "preact/hooks";
 import {
   createRouter,
   Router,

@@ -3,7 +3,6 @@ import { useSelector } from "@xstate/store/react";
 import { h } from "preact";
 import { useCallback } from "preact/hooks";
 
-
 export type View = () => h.JSX.Element;
 
 export type Router<R extends string> = ReturnType<
@@ -17,11 +16,10 @@ export function createRouter<R extends RouteTable>(
   routeTable: R,
   initial: keyof R,
 ) {
-
   const store = createStore({
     context: { route: initial, view: routeTable[initial] },
     on: {
-      setRoute: (_, event: { route: keyof R; }) => ({
+      setRoute: (_, event: { route: keyof R }) => ({
         route: event.route,
         view: routeTable[event.route] ?? None,
       }),
@@ -33,8 +31,10 @@ export function createRouter<R extends RouteTable>(
 
 export function useRouter<R extends string>(router: Router<R>) {
   return {
-    setRoute: useCallback((route: R) => router.trigger.setRoute({ route }), [router]),
+    setRoute: useCallback((route: R) => router.trigger.setRoute({ route }), [
+      router,
+    ]),
     route: useSelector(router, (state) => state.context.route),
-    View: useSelector(router, (state) => state.context.view)
+    View: useSelector(router, (state) => state.context.view),
   };
 }
