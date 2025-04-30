@@ -26,8 +26,6 @@ export const GridDraggable = memo((
 
   const pos = useMemo(
     () => {
-      console.log("MEMO");
-
       return createAtom({
         x: props.x,
         y: props.y,

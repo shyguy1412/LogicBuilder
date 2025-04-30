@@ -1,16 +1,13 @@
-import { GridDraggable, GridSurface } from "@/components/GridSurface";
-import style from "./Workspace.module.css";
+import "./Workspace.module.css";
 import { h } from "preact";
-import { useEffect, useMemo, useState } from "preact/hooks";
+import { useMemo } from "preact/hooks";
 import { createAtom } from "@xstate/store";
 import { Lumber } from "@/components/lib/log/Lumber";
-import { useSelector } from "@xstate/store/react";
+import { GridDraggable, GridSurface } from "@/components/GridSurface";
 
 type Props = {};
 
 export function Workspace({}: Props) {
-  style;
-
   Lumber.log(Lumber.RENDER, "WORKSPACE RENDER");
 
   const pos = useMemo(() => createAtom({ x: 0, y: 0 }), []);
