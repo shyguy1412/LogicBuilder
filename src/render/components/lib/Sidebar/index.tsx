@@ -79,7 +79,7 @@ function SidebarComponent({ menus }: Props) {
         {view}
       </div>
     );
-  }, [View]);
+  }, [View, width]);
 
   return (
     <div class={style.sidebar} style-sidebar="">
