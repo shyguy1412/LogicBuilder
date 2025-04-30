@@ -69,6 +69,7 @@ function SidebarComponent({ menus }: Props) {
     return (
       <div
         style-sidebar-view=""
+        data-width={width.get()}
         ref={ref}
       >
         {view}
