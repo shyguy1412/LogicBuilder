@@ -43,7 +43,7 @@ const createRenderContext = async () =>
       "src/render/index.tsx",
       "src/render/index.html",
     ],
-    loader: { ".html": "copy" },
+    loader: { ".html": "copy", ".woff2": "copy" },
     plugins: WATCH ? [reloadPlugin] : [],
     outbase: "./src/render",
     outdir: "./build",

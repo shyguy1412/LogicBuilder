@@ -4,10 +4,6 @@
 
   background-color: var(--clr-surface-a0);
   color: var(--clr-foreground-a0);
-  font-family: "Roboto", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 300;
-  font-style: normal;
 
   display: flex;
   flex-direction: column;
