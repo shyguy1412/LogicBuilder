@@ -7,33 +7,27 @@ import { Titlebar } from "@/components/lib/Titlebar";
 import { PiCircuitry, PiCpu, PiFile, PiGear } from "react-icons/pi";
 import { useCallback } from "preact/hooks";
 import { Lumber } from "@/components/lib/log/Lumber";
-type Props = {};
+import { Workspace } from "@/components/Workspace";
 
 export const Router = createRouter({
-  home: () => <div>Home</div>,
+  workspace: () => <Workspace />,
   other: () => <div>Other</div>,
-}, "home");
+}, "workspace");
 
 const Menus: Menu[][] = [
   [{
     icon: PiFile,
     name: "explorer",
     menu: () => (
-      <div>
+      <div onClick={() => Router.trigger.setRoute({ route: "workspace" })}>
         Explorer
-        <button onClick={() => Router.trigger.setRoute({ route: "home" })}>
-          home
-        </button>
-        <button onClick={() => Router.trigger.setRoute({ route: "other" })}>
-          other
-        </button>
       </div>
     ),
   }, {
     icon: PiCircuitry,
     name: "circuits",
     menu: () => (
-      <div>
+      <div onClick={() => Router.trigger.setRoute({ route: "other" })}>
         circuits
       </div>
     ),
@@ -46,8 +40,9 @@ const Menus: Menu[][] = [
 ];
 
 Lumber.blockChannel(Lumber.RENDER);
+// Lumber.blockChannel(Lumber.HOOK);
 
-export function App(props: Props) {
+export function App() {
   const { View } = useRouter(Router);
 
   Lumber.log(Lumber.RENDER, "APP RENDER");
