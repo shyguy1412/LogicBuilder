@@ -43,7 +43,7 @@
 }
 
 .sidebar > div:last-child {
-  width: 4px;
+  width: 15px;
   z-index: 999;
   position: absolute;
   right: 0;
