@@ -6,6 +6,7 @@ import {
   Menu,
   MenuItem,
   nativeTheme,
+  session,
 } from "electron";
 
 //TEMP
@@ -61,7 +62,6 @@ function createWindow() {
     minHeight: height,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
-      nodeIntegration: true,
     },
     frame: false,
   });
@@ -85,6 +85,16 @@ function createWindow() {
 app.whenReady().then(async () => {
   Menu.setApplicationMenu(createMenu());
   createWindow();
+
+  session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+    callback({
+      responseHeaders: {
+        ...details.responseHeaders,
+        'Content-Security-Policy': [`default-src 'self' ${process.env.DEV ? "'unsafe-inline'" : ''}`]
+      }
+    });
+  });
+
 });
 
 // nativeTheme.themeSource = "light";
