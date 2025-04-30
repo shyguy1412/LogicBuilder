@@ -6,6 +6,7 @@ import {
   useEffect,
   useMemo,
   useRef,
+  useState,
 } from "preact/compat";
 import style from "./GirdSurface.module.css";
 import { createAtom } from "@xstate/store";
@@ -35,6 +36,7 @@ export const GridDraggable = memo((
   );
   const { x, y } = pos.get();
 
+  const [attached, setAttached] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -48,27 +50,32 @@ export const GridDraggable = memo((
     return unsubscribe;
   }, [pos]);
 
-  const move = useCallback(
-    (
-      startPos: { x: number; y: number },
-      startMouse: { x: number; y: number },
-    ) =>
-    (ev: MouseEvent) => {
-      if (!ref.current) return;
-      const em = +getComputedStyle(ref.current).fontSize.slice(0, -2);
+  const movehandler = useCallback((ev: MouseEvent) => {
+    if (!ref.current) return;
+    const em = +getComputedStyle(ref.current).fontSize.slice(0, -2);
 
-      const x = startPos.x - ((startMouse.x - ev.clientX) / em);
-      const y = startPos.y - ((startMouse.y - ev.clientY) / em);
+    const x = pos.get().x + (ev.movementX / em);
+    const y = pos.get().y + (ev.movementY / em);
 
-      if (
-        Math.round(x) == Math.round(pos.get().x) &&
-        Math.round(y) == Math.round(pos.get().y)
-      ) return;
+    pos.set({ x, y });
+  }, [pos]);
 
-      pos.set({ x, y });
-    },
-    [pos],
-  );
+  useEffect(() => {
+    Lumber.log(Lumber.HOOK, "EFFECT - GridDraggable move");
+    if (!attached) return;
+
+    window.addEventListener("mousemove", movehandler);
+    window.addEventListener("mouseup", () => {
+      document.body.style.cursor = "";
+      window.removeEventListener("mousemove", movehandler);
+      setAttached(false);
+    }, {
+      once: true,
+    });
+    document.body.style.cursor = "grabbing"; //! todo overwrite other cursors
+
+    return () => window.removeEventListener("mousemove", movehandler);
+  }, [attached, pos]);
 
   return (
     <div
@@ -81,21 +88,7 @@ export const GridDraggable = memo((
       data-pos-y={Math.round(y)}
       onMouseDown={(event) => {
         event.stopPropagation();
-        const movehandler = move(
-          pos.get(),
-          {
-            x: event.clientX,
-            y: event.clientY,
-          },
-        );
-        window.addEventListener("mousemove", movehandler);
-        window.addEventListener("mouseup", () => {
-          document.body.style.cursor = "";
-          window.removeEventListener("mousemove", movehandler);
-        }, {
-          once: true,
-        });
-        document.body.style.cursor = "grabbing";
+        setAttached(true);
       }}
     >
       {children}
