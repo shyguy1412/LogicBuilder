@@ -34,8 +34,17 @@
 }
 
 /* View */
+.sidebar > [style-sidebar-view] {
+  width: clamp(
+    var(--min-width, 0px),
+    attr(data-width px, 0px),
+    var(--max-width, 100vw)
+  );
+}
+
 .sidebar > div:last-child {
   width: 4px;
+  z-index: 999;
   position: absolute;
   right: 0;
   transform: translate(50%);

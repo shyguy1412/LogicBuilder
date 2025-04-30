@@ -1,6 +1,11 @@
-import { FunctionComponent, h } from "preact";
+import { h } from "preact";
 import style from "./Sidebar.module.css";
-import { useCallback, useMemo, useRef, useState } from "preact/hooks";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+} from "preact/hooks";
 import {
   createRouter,
   Router,
@@ -10,7 +15,6 @@ import {
 import { IconType } from "react-icons";
 import { memo } from "preact/compat";
 import { createAtom } from "@xstate/store";
-import { useSelector } from "@xstate/store/react";
 import { Lumber } from "@/components/lib/log/Lumber";
 
 export type Menu = {
@@ -53,7 +57,16 @@ function SidebarComponent({ menus }: Props) {
   const ViewContainer = useCallback(() => {
     Lumber.log(Lumber.RENDER, "VIEW CONTAINER RERENDER");
 
-    const currentWidth = useSelector(width, (state) => state);
+    useEffect(() => {
+      Lumber.log(Lumber.HOOK, "EFFECT - Sidebar view resize");
+      const { unsubscribe } = width.subscribe((width) => {
+        if (!ref.current) return;
+        ref.current.setAttribute("data-width", width + "");
+      });
+
+      return unsubscribe;
+    }, [width]);
+
     const view = View();
 
     if (!view) return false;
@@ -62,7 +75,6 @@ function SidebarComponent({ menus }: Props) {
       <div
         style-sidebar-view=""
         ref={ref}
-        style={{ width: `clamp(5em, ${currentWidth}px, 20em)` }}
       >
         {view}
       </div>
