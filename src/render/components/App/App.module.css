@@ -44,6 +44,11 @@
   color: var(--clr-primary-a0);
 }
 
+.view [style-sidebar-view] {
+  --min-width: 10em;
+  --max-width: 80vw;
+}
+
 /* Info Bar */
 .app > :last-child {
   border-top: 1px solid var(--clr-primary-a10);
