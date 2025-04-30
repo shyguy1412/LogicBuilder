@@ -1,5 +1,5 @@
 .surface {
-  --dot-size: 0.05em;
+  --dot-size: max(1px, 0.1em);
   --dot-spacing: 1em;
 
   --offset-x: attr(data-offset-x px, 0px);
