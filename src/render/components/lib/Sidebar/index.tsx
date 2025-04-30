@@ -59,15 +59,19 @@ function SidebarComponent({ menus }: Props) {
     if (!view) return false;
 
     return (
-      <div ref={ref} style={{ width: `clamp(5em, ${currentWidth}px, 20em)` }}>
+      <div
+        style-sidebar-view=""
+        ref={ref}
+        style={{ width: `clamp(5em, ${currentWidth}px, 20em)` }}
+      >
         {view}
       </div>
     );
   }, [View]);
 
   return (
-    <div class={style.sidebar}>
-      <div>
+    <div class={style.sidebar} style-sidebar="">
+      <div style-sidebar-menu="">
         {menus.map((menus) => (
           <div>
             {menus.map((menu) => <MenuItem router={Router} menu={menu} />)}
@@ -108,7 +112,9 @@ const MenuItem = memo(({ menu, router }: MenuItemProps) => {
 
   return (
     <div
-      data-active={route == menu.name ? "" : undefined}
+      style-sidebar-menuitem=""
+      style-active={route == menu.name ? "" : undefined}
+      style-inactive={route != menu.name ? "" : undefined}
       class={style.menuitem}
       onClick={() => setRoute(menu.name == route ? "@None" : menu.name)}
     >

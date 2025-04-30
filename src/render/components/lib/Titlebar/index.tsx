@@ -21,27 +21,32 @@ export const Titlebar = memo(
     Lumber.log(Lumber.RENDER, "TITLEBAR RENDER");
 
     return (
-      <div class={style.titlebar}>
-        <div>
+      <div class={style.titlebar} style-titlebar="">
+        <div style-titlebar-icon="">
           {h(icon, {})}
         </div>
 
-        <div>
+        <div style-titlebar-title="">
           {title}
         </div>
 
-        <div>
+        <div style-titlebar-controls="">
           <div
+            style-titlebar-controls-minimize=""
             onClick={(_) => minimize()}
           >
             <FaWindowMinimize />
           </div>
+
           <div
+            style-titlebar-controls-maximise=""
             onClick={(_) => maximize()}
           >
             <FaRegSquare />
           </div>
+
           <div
+            style-titlebar-controls-close=""
             onClick={(_) => close()}
           >
             <FaX />
