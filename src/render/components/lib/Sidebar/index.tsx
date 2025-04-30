@@ -9,8 +9,9 @@ import {
 } from "@/components/lib/Router";
 import { IconType } from "react-icons";
 import { memo } from "preact/compat";
-import { createAtom, createStore } from "@xstate/store";
+import { createAtom } from "@xstate/store";
 import { useSelector } from "@xstate/store/react";
+import { Lumber } from "@/components/lib/log/Lumber";
 
 export type Menu = {
   name: string;
@@ -26,7 +27,7 @@ type Props = {
 export const Sidebar = memo(SidebarComponent);
 
 function SidebarComponent({ menus }: Props) {
-  console.log("SIDEBAR RENDER");
+  Lumber.log(Lumber.RENDER, "SIDEBAR RENDER");
 
   const Router = useMemo(() => {
     const routes = menus.flat().reduce(
@@ -50,13 +51,13 @@ function SidebarComponent({ menus }: Props) {
   );
 
   const ViewContainer = useCallback(() => {
-    console.log("VIEW CONTAINER RERENDER");
+    Lumber.log(Lumber.RENDER, "VIEW CONTAINER RERENDER");
 
     const currentWidth = useSelector(width, (state) => state);
     const view = View();
 
     if (!view) return false;
-    
+
     return (
       <div ref={ref} style={{ width: `clamp(5em, ${currentWidth}px, 20em)` }}>
         {view}
@@ -101,7 +102,7 @@ type MenuItemProps = {
 };
 
 const MenuItem = memo(({ menu, router }: MenuItemProps) => {
-  console.log("MENU ITEM RENDER: " + menu.name);
+  Lumber.log(Lumber.RENDER, "MENU ITEM RENDER: " + menu.name);
 
   const { route, setRoute } = useRouter(router);
 

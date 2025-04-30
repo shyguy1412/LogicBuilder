@@ -6,6 +6,7 @@ import { createRouter, useRouter } from "@/components/lib/Router";
 import { Titlebar } from "@/components/lib/Titlebar";
 import { PiCircuitry, PiCpu, PiFile, PiGear } from "react-icons/pi";
 import { useCallback } from "preact/hooks";
+import { Lumber } from "@/components/lib/log/Lumber";
 type Props = {};
 
 export const Router = createRouter({
@@ -44,10 +45,12 @@ const Menus: Menu[][] = [
   }],
 ];
 
+Lumber.blockChannel(Lumber.RENDER);
+
 export function App(props: Props) {
   const { View } = useRouter(Router);
 
-  console.log("APP RENDER");
+  Lumber.log(Lumber.RENDER, "APP RENDER");
 
   return (
     <div class={style.app}>

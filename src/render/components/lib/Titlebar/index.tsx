@@ -1,12 +1,9 @@
 import { h } from "preact";
 import style from "./Titlebar.module.css";
 import { IconType } from "react-icons";
-import {
-  FaRegSquare,
-  FaWindowMinimize,
-  FaX,
-} from "react-icons/fa6";
+import { FaRegSquare, FaWindowMinimize, FaX } from "react-icons/fa6";
 import { memo } from "preact/compat";
+import { Lumber } from "@/components/lib/log/Lumber";
 
 type Props = {
   title: string;
@@ -21,7 +18,7 @@ type Props = {
  */
 export const Titlebar = memo(
   ({ title, icon, minimize, maximize, close }: Props) => {
-    console.log("TITLEBAR RENDER");
+    Lumber.log(Lumber.RENDER, "TITLEBAR RENDER");
 
     return (
       <div class={style.titlebar}>
