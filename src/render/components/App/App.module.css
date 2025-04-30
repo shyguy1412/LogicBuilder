@@ -39,7 +39,7 @@
   border-right: 1px solid var(--clr-primary-a10);
 }
 
-.view [style-sidebar-menuitem][style_active],
+.view [style-sidebar-menuitem][style-active],
 .view [style-sidebar-menuitem]:hover {
   color: var(--clr-primary-a0);
 }
