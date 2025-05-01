@@ -23,9 +23,7 @@ type Props = {
   menus: Menu[][];
 };
 
-export const Sidebar = memo(SidebarComponent);
-
-function SidebarComponent({ menus }: Props) {
+export const Sidebar = memo(({ menus }: Props) => {
   Lumber.log(Lumber.RENDER, "SIDEBAR RENDER");
 
   const Router = useMemo(() => {
@@ -106,7 +104,7 @@ function SidebarComponent({ menus }: Props) {
       </div>
     </div>
   );
-}
+});
 
 type MenuItemProps = {
   menu: Menu;
