@@ -7,9 +7,14 @@ export const ComponentList = memo(() => {
   return (
     <DragTarget
       group={DROP_GROUPS.CIRCUIT_COMPONENT}
-      data={"HELLO WORwLD"}
+      data={{ message: "HelloWorld" }}
+      ghostElement={() => (
+        <div style={{ background: "red", width: "3em", height: "5em" }}>
+        </div>
+      )}
     >
-      Test
+      <div style={{ background: "red", width: "3em", height: "5em" }}>
+      </div>
     </DragTarget>
   );
 });

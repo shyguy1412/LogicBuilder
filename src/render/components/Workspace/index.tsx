@@ -17,19 +17,42 @@ export function Workspace({}: Props) {
   const zoom = useMemo(() => createAtom(1), []);
 
   return (
-    <DropTarget
-      class={style.workspace}
-      accept={DROP_GROUPS.CIRCUIT_COMPONENT}
-      onDrop={(e) => {
-        console.log(e.dataTransfer?.getData?.("data"));
-      }}
+    <GridSurface
+      zoom={zoom.get()}
+      offsetX={offset.get().x}
+      offsetY={offset.get().y}
+      onZoomUpdate={(newZoom) => zoom.set(newZoom)}
+      onOffsetUpdate={(
+        newOffset,
+      ) => (offset.set(newOffset), console.log("offset update", offset.get()))}
     >
-      <GridSurface
-        zoom={zoom.get()}
-        offsetX={offset.get().x}
-        offsetY={offset.get().y}
-        onZoomUpdate={(newZoom) => zoom.set(newZoom)}
-        // onOffsetUpdate={(newOffset) => offset.set(newOffset)}
+      <DropTarget
+        class={style.workspace}
+        accept={DROP_GROUPS.CIRCUIT_COMPONENT}
+        onDragOver={(ev, ghost) => {
+          if (!ghost) return;
+
+          const currentOffset = offset.get();
+          const ghostPos = ghost.getBoundingClientRect();
+          const boundingRect = ev.currentTarget.getBoundingClientRect();
+          const em = +getComputedStyle(ev.currentTarget).fontSize.slice(0, -2);
+
+          const origin = {
+            x: currentOffset.x + boundingRect.x,
+            y: currentOffset.y + boundingRect.y,
+          };
+
+          const elementPos = {
+            x: Math.round((ghostPos.x - origin.x) / em) * em + boundingRect.x,
+            y: Math.round((ghostPos.y - origin.y) / em) * em + boundingRect.y,
+          };
+
+          ghost.setAttribute("data-pos-x", elementPos.x + "");
+          ghost.setAttribute("data-pos-y", elementPos.y + "");
+        }}
+        onDrop={(e, data) => {
+          console.log(data);
+        }}
       >
         <GridDraggable
           width={3}
@@ -40,7 +63,7 @@ export function Workspace({}: Props) {
           <div style={{ background: "red", width: "100%", height: "100%" }}>
           </div>
         </GridDraggable>
-      </GridSurface>
-    </DropTarget>
+      </DropTarget>
+    </GridSurface>
   );
 }
