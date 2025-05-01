@@ -1,0 +1,34 @@
+import { h } from "preact";
+import { HTMLAttributes, memo, useCallback } from "preact/compat";
+
+type Props = {
+  accept: string | string[];
+} & HTMLAttributes<HTMLDivElement>;
+
+export const DropTarget = memo((
+  { accept, onDragEnter, onDragOver, ...attr }: Props,
+) => {
+
+  const shouldAccept = useCallback((types?: readonly string[]) => {
+    if (!types) return false;
+    const valid = typeof accept == "string" ? [accept] : accept;
+    return valid.some((v) => types.includes(v));
+  }, [accept]);
+  
+  return (
+    <div
+      draggable={true}
+      data-drag-accept={accept}
+      onDragEnter={(e) => {
+        if (shouldAccept(e.dataTransfer?.types)) e.preventDefault();
+        if (onDragEnter) onDragEnter(e);
+      }}
+      onDragOver={(e) => {
+        if (shouldAccept(e.dataTransfer?.types)) e.preventDefault();
+        if (onDragOver) onDragOver(e);
+      }}
+      {...attr}
+    >
+    </div>
+  );
+});
