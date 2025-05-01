@@ -9,20 +9,33 @@ import {
   useCallback,
 } from "preact/compat";
 
-type Props = {
-  accept: string | string[];
-  onDrop?: (
-    ev: TargetedEvent<HTMLDivElement, DragEvent>,
-    data?: unknown,
-  ) => void;
-  onDragOver?: (
-    ev: TargetedEvent<HTMLDivElement, DragEvent>,
-    ghost?: HTMLDivElement,
-  ) => void;
-} & Omit<HTMLAttributes<HTMLDivElement>, "onDrop" | "onDragOver">;
+type Props =
+  & {
+    accept: string | string[];
+    onDrop?: (
+      ev: TargetedEvent<HTMLDivElement, DragEvent>,
+      data?: unknown,
+    ) => void;
+    onDragEnter?: (
+      ev: TargetedEvent<HTMLDivElement, DragEvent>,
+      ghost?: HTMLDivElement,
+    ) => void;
+    onDragOver?: (
+      ev: TargetedEvent<HTMLDivElement, DragEvent>,
+      ghost?: HTMLDivElement,
+    ) => void;
+    onDragLeave?: (
+      ev: TargetedEvent<HTMLDivElement, DragEvent>,
+      ghost?: HTMLDivElement,
+    ) => void;
+  }
+  & Omit<
+    HTMLAttributes<HTMLDivElement>,
+    "onDrop" | "onDragOver" | "onDragEnter" | "onDragLeave"
+  >;
 
 export const DropTarget = memo((
-  { accept, onDragEnter, onDragOver, onDrop, ...attr }: Props,
+  { accept, onDragEnter, onDragOver, onDrop, onDragLeave, ...attr }: Props,
 ) => {
   Lumber.log(Lumber.RENDER, "RENDER DROP TARGET");
 
@@ -39,7 +52,10 @@ export const DropTarget = memo((
       class={style.droptarget + " " + (attr.className ?? attr.class ?? "")}
       onDragEnter={(e) => {
         if (shouldAccept(e.dataTransfer?.types)) e.preventDefault();
-        onDragEnter?.(e);
+        const id = +e.dataTransfer?.types.find((t) => t.startsWith("id-"))!
+          .slice(3)!;
+        const ghost = DragStore.get().context.ghostElements.get(id);
+        onDragEnter?.(e, ghost);
       }}
       onDragOver={(e) => {
         if (shouldAccept(e.dataTransfer?.types)) e.preventDefault();
@@ -47,6 +63,15 @@ export const DropTarget = memo((
           .slice(3)!;
         const ghost = DragStore.get().context.ghostElements.get(id);
         onDragOver?.(e, ghost);
+      }}
+      onDragLeave={(e) => {
+        console.log("Leave");
+        
+        if (shouldAccept(e.dataTransfer?.types)) e.preventDefault();
+        const id = +e.dataTransfer?.types.find((t) => t.startsWith("id-"))!
+          .slice(3)!;
+        const ghost = DragStore.get().context.ghostElements.get(id);
+        onDragLeave?.(e, ghost);
       }}
       onDrop={(e) => {
         const id = +e.dataTransfer?.getData("data-id")!;
