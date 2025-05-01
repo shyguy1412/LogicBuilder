@@ -24,12 +24,10 @@ export const DropTarget = memo((
       style-drop-target=""
       class={style.droptarget + " " + (attr.className ?? attr.class ?? "")}
       onDragEnter={(e) => {
-        console.log("EVENT")
         if (shouldAccept(e.dataTransfer?.types)) e.preventDefault();
         if (onDragEnter) onDragEnter(e);
       }}
       onDragOver={(e) => {
-        console.log("EVENT")
         if (shouldAccept(e.dataTransfer?.types)) e.preventDefault();
         if (onDragOver) onDragOver(e);
       }}
