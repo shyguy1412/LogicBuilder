@@ -24,13 +24,15 @@ export function Workspace({}: Props) {
       onZoomUpdate={(newZoom) => zoom.set(newZoom)}
       onOffsetUpdate={(
         newOffset,
-      ) => (offset.set(newOffset), console.log("offset update", offset.get()))}
+      ) => offset.set(newOffset)}
     >
       <DropTarget
         class={style.workspace}
         accept={DROP_GROUPS.CIRCUIT_COMPONENT}
         onDragOver={(ev, ghost) => {
           if (!ghost) return;
+
+          ev.currentTarget.append(ghost);
 
           const currentOffset = offset.get();
           const ghostPos = ghost.getBoundingClientRect();
@@ -43,13 +45,31 @@ export function Workspace({}: Props) {
           };
 
           const elementPos = {
-            x: Math.round((ghostPos.x - origin.x) / em) * em + boundingRect.x + currentOffset.x,
-            y: Math.round((ghostPos.y - origin.y) / em) * em + boundingRect.y + currentOffset.y,
+            x: ((Math.round((ghostPos.x - origin.x) / em) * em) +
+              currentOffset.x),
+            y: ((Math.round((ghostPos.y - origin.y) / em) * em) +
+              currentOffset.y),
           };
 
-          ghost.setAttribute("data-pos-x", elementPos.x + "");
-          ghost.setAttribute("data-pos-y", elementPos.y + "");
+          const posOnGrid = {
+            x: Math.round(
+              (ghostPos.x - boundingRect.x * 2 - currentOffset.x) / em,
+            ),
+            y: Math.round(
+              (ghostPos.y - boundingRect.y * 2 - currentOffset.y) / em,
+            ),
+          };
+
+          ghost.setAttribute(
+            "data-pos-x",
+            (posOnGrid.x * em) + currentOffset.x + "",
+          );
+          ghost.setAttribute(
+            "data-pos-y",
+            (posOnGrid.y * em) + currentOffset.y + "",
+          );
         }}
+        onDragLeave={(_, ghost) => document.body.append(ghost!)}
         onDrop={(e, data) => {
           console.log(data);
         }}

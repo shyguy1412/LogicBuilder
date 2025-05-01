@@ -65,8 +65,6 @@ export const DropTarget = memo((
         onDragOver?.(e, ghost);
       }}
       onDragLeave={(e) => {
-        console.log("Leave");
-        
         if (shouldAccept(e.dataTransfer?.types)) e.preventDefault();
         const id = +e.dataTransfer?.types.find((t) => t.startsWith("id-"))!
           .slice(3)!;
