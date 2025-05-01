@@ -90,11 +90,12 @@ app.whenReady().then(async () => {
     callback({
       responseHeaders: {
         ...details.responseHeaders,
-        'Content-Security-Policy': [`default-src 'self' ${process.env.DEV ? "'unsafe-inline'" : ''}`]
-      }
+        "Content-Security-Policy": [
+          `default-src 'self' ${process.env.DEV ? "'unsafe-inline'" : ""}`,
+        ],
+      },
     });
   });
-
 });
 
 // nativeTheme.themeSource = "light";
