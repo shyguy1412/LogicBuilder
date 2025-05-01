@@ -5,7 +5,11 @@
   --offset-x: attr(data-offset-x px, 0px);
   --offset-y: attr(data-offset-y px, 0px);
 
-  font-size: clamp(0.5em, attr(data-zoom em), 5em);
+  font-size: clamp(
+    attr(data-min-zoom em, 0.5em),
+    attr(data-zoom em),
+    attr(data-max-zoom em, 10em)
+  );
 
   width: 100%;
   height: 100%;
@@ -23,7 +27,6 @@
 
 .griddraggable {
   position: absolute;
-  background-color: red;
   width: attr(data-scale-w em);
   height: attr(data-scale-h em);
   left: calc(attr(data-pos-x em) + var(--offset-x));

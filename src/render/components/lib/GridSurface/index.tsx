@@ -1,22 +1,26 @@
 import style from "./GirdSurface.module.css";
 
-import { PropsWithChildren } from "preact/compat";
+import { PropsWithChildren, TargetedEvent } from "preact/compat";
 import { useCallback, useEffect, useMemo, useRef } from "preact/hooks";
 import { h } from "preact";
 
 import { Lumber } from "@/components/lib/log/Lumber";
 import { createAtom } from "@xstate/store";
 
+type Point = { x: number; y: number };
+
 type Props = {
   zoom: number;
+  minZoom?: number;
+  maxZoom?: number;
   onZoomUpdate?: (zoom: number) => void;
-  onOffsetUpdate?: (offset: { x: number; y: number }) => void;
+  onOffsetUpdate?: (offset: Point) => void;
   offsetX?: number;
   offsetY?: number;
 };
 
 export function GridSurface(
-  { children, ...props }: PropsWithChildren<Props>,
+  { children, minZoom, maxZoom, ...props }: PropsWithChildren<Props>,
 ) {
   Lumber.log(Lumber.RENDER, "GRID SURFACE RENDER");
 
@@ -59,8 +63,8 @@ export function GridSurface(
 
   const move = useCallback(
     (
-      startPos: { x: number; y: number },
-      startMouse: { x: number; y: number },
+      startPos: Point,
+      startMouse: Point,
     ) =>
     (ev: MouseEvent) => {
       if (!ref.current) return;
@@ -78,16 +82,36 @@ export function GridSurface(
       ref={ref}
       style-grid-surface=""
       data-zoom={zoom.get()}
+      data-min-zoom={minZoom}
+      data-max-zoom={maxZoom}
       data-offset-x={offset.get().x}
       data-offset-y={offset.get().y}
       class={style.surface}
-      onWheel={(
-        { deltaY, currentTarget, currentTarget: { parentElement } },
-      ) => {
-        const currentZoom =
-          +(getComputedStyle(currentTarget).fontSize.slice(0, -2)) /
-          +(getComputedStyle(parentElement!).fontSize.slice(0, -2));
-        zoom.set(currentZoom - (deltaY / 2000));
+      onWheel={(event) => {
+        const { currentTarget, deltaY, clientX, clientY } = event;
+
+        const currentOffset = offset.get();
+        const currentZoom = zoom.get();
+
+        const newZoom = currentZoom - (deltaY / 500);
+        if (newZoom > (maxZoom ?? 10) || newZoom < (minZoom ?? 0.5)) return;
+
+        const boundingBox = currentTarget.getBoundingClientRect();
+
+        const delta = 1 - (newZoom / currentZoom);
+
+        const moveAmount = {
+          x: delta * (clientX - boundingBox.x - currentOffset.x),
+          y: delta * (clientY - boundingBox.y - currentOffset.y),
+        };
+
+        const zoomOffset = {
+          x: currentOffset.x + moveAmount.x,
+          y: currentOffset.y + moveAmount.y,
+        };
+
+        offset.set(zoomOffset);
+        zoom.set(newZoom);
       }}
       onMouseDown={(event) => {
         event.stopPropagation();
