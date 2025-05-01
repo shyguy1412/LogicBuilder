@@ -8,6 +8,7 @@ import { PiCircuitry, PiCpu, PiFile, PiGear } from "react-icons/pi";
 import { useCallback } from "preact/hooks";
 import { Lumber } from "@/components/lib/log/Lumber";
 import { Workspace } from "@/components/Workspace";
+import { ComponentList } from "@/components/ComponentList";
 
 export const Router = createRouter({
   workspace: () => <Workspace />,
@@ -19,17 +20,19 @@ const Menus: Menu[][] = [
     icon: PiFile,
     name: "explorer",
     menu: () => (
-      <div onClick={() => Router.trigger.setRoute({ route: "workspace" })}>
-        Explorer
-      </div>
+      <ComponentList></ComponentList>
+      // <div onClick={() => Router.trigger.setRoute({ route: "workspace" })}>
+      //   Explorer
+      // </div>
     ),
   }, {
     icon: PiCircuitry,
     name: "circuits",
     menu: () => (
-      <div onClick={() => Router.trigger.setRoute({ route: "other" })}>
-        circuits
-      </div>
+      <div>circuits</div>
+      // <div onClick={() => Router.trigger.setRoute({ route: "other" })}>
+      //   circuits
+      // </div>
     ),
   }],
   [{
@@ -39,7 +42,7 @@ const Menus: Menu[][] = [
   }],
 ];
 
-Lumber.blockChannel(Lumber.RENDER);
+// Lumber.blockChannel(Lumber.RENDER);
 // Lumber.blockChannel(Lumber.HOOK);
 
 export function App() {
