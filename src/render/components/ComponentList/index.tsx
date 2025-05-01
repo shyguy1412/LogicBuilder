@@ -1,5 +1,5 @@
 import { DROP_GROUPS } from "@/components/App";
-import { DragTarget } from "@/lib/components/DragTarget";
+import { DragTarget } from "@/lib/components/DragNDrop";
 import { h } from "preact";
 import { memo } from "preact/compat";
 

@@ -1,3 +1,4 @@
+import style from "./DragNDrop.module.css";
 import { Lumber } from "@/lib/log/Lumber";
 import { h } from "preact";
 import { HTMLAttributes, memo } from "preact/compat";
@@ -12,6 +13,7 @@ export const DragTarget = memo(
     Lumber.log(Lumber.RENDER, "RENDER DRAG TARGET");
     return (
       <div
+        class={style.dragtarget + " " + (attr.className ?? attr.class ?? "")}
         style-drag-target=""
         draggable={true}
         data-drag-group={group}
