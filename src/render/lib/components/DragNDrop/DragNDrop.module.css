@@ -1,3 +1,10 @@
 .dragtarget, .droptarget {
   width: fit-content;
 }
+
+.ghostimage {
+  position: absolute;
+  pointer-events: none;
+  left: attr(data-pos-x px);
+  top: attr(data-pos-y px);
+}

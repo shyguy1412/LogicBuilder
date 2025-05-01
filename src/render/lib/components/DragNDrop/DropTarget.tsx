@@ -1,14 +1,28 @@
+import { DragStore } from "@/lib/components/DragNDrop/DragTarget";
 import style from "./DragNDrop.module.css";
 import { Lumber } from "@/lib/log/Lumber";
 import { h } from "preact";
-import { HTMLAttributes, memo, useCallback } from "preact/compat";
+import {
+  HTMLAttributes,
+  memo,
+  TargetedEvent,
+  useCallback,
+} from "preact/compat";
 
 type Props = {
   accept: string | string[];
-} & HTMLAttributes<HTMLDivElement>;
+  onDrop?: (
+    ev: TargetedEvent<HTMLDivElement, DragEvent>,
+    data?: unknown,
+  ) => void;
+  onDragOver?: (
+    ev: TargetedEvent<HTMLDivElement, DragEvent>,
+    ghost?: HTMLDivElement,
+  ) => void;
+} & Omit<HTMLAttributes<HTMLDivElement>, "onDrop" | "onDragOver">;
 
 export const DropTarget = memo((
-  { accept, onDragEnter, onDragOver, ...attr }: Props,
+  { accept, onDragEnter, onDragOver, onDrop, ...attr }: Props,
 ) => {
   Lumber.log(Lumber.RENDER, "RENDER DROP TARGET");
 
@@ -25,11 +39,19 @@ export const DropTarget = memo((
       class={style.droptarget + " " + (attr.className ?? attr.class ?? "")}
       onDragEnter={(e) => {
         if (shouldAccept(e.dataTransfer?.types)) e.preventDefault();
-        if (onDragEnter) onDragEnter(e);
+        onDragEnter?.(e);
       }}
       onDragOver={(e) => {
         if (shouldAccept(e.dataTransfer?.types)) e.preventDefault();
-        if (onDragOver) onDragOver(e);
+        const id = +e.dataTransfer?.types.find((t) => t.startsWith("id-"))!
+          .slice(3)!;
+        const ghost = DragStore.get().context.ghostElements.get(id);
+        onDragOver?.(e, ghost);
+      }}
+      onDrop={(e) => {
+        const id = +e.dataTransfer?.getData("data-id")!;
+        const data = DragStore.get().context.data.get(id);
+        onDrop?.(e, data);
       }}
     >
     </div>
