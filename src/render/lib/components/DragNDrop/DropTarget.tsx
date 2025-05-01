@@ -18,14 +18,17 @@ type Props =
     ) => void;
     onDragEnter?: (
       ev: TargetedEvent<HTMLDivElement, DragEvent>,
+      data?: unknown,
       ghost?: HTMLDivElement,
     ) => void;
     onDragOver?: (
       ev: TargetedEvent<HTMLDivElement, DragEvent>,
+      data?: unknown,
       ghost?: HTMLDivElement,
     ) => void;
     onDragLeave?: (
       ev: TargetedEvent<HTMLDivElement, DragEvent>,
+      data?: unknown,
       ghost?: HTMLDivElement,
     ) => void;
   }
@@ -33,6 +36,22 @@ type Props =
     HTMLAttributes<HTMLDivElement>,
     "onDrop" | "onDragOver" | "onDragEnter" | "onDragLeave"
   >;
+
+const getDataFromEvent = (
+  event: TargetedEvent<HTMLDivElement, DragEvent>,
+) => {
+  const id = +event.dataTransfer?.types.find((t) => t.startsWith("data-"))!
+    .split("-")[1]!;
+  return DragStore.get().context.data.get(id);
+};
+
+const getGhostFromEvent = (
+  event: TargetedEvent<HTMLDivElement, DragEvent>,
+) => {
+  const id = +event.dataTransfer?.types.find((t) => t.startsWith("ghost-"))!
+    .split("-")[1]!;
+  return DragStore.get().context.ghostElements.get(id);
+};
 
 export const DropTarget = memo((
   { accept, onDragEnter, onDragOver, onDrop, onDragLeave, ...attr }: Props,
@@ -52,28 +71,26 @@ export const DropTarget = memo((
       class={style.droptarget + " " + (attr.className ?? attr.class ?? "")}
       onDragEnter={(e) => {
         if (shouldAccept(e.dataTransfer?.types)) e.preventDefault();
-        const id = +e.dataTransfer?.types.find((t) => t.startsWith("id-"))!
-          .slice(3)!;
-        const ghost = DragStore.get().context.ghostElements.get(id);
-        onDragEnter?.(e, ghost);
+        const ghost = getGhostFromEvent(e);
+        const data = getDataFromEvent(e);
+        onDragEnter?.(e, data, ghost);
       }}
       onDragOver={(e) => {
         if (shouldAccept(e.dataTransfer?.types)) e.preventDefault();
-        const id = +e.dataTransfer?.types.find((t) => t.startsWith("id-"))!
-          .slice(3)!;
-        const ghost = DragStore.get().context.ghostElements.get(id);
-        onDragOver?.(e, ghost);
+        const ghost = getGhostFromEvent(e);
+        const data = getDataFromEvent(e);
+        onDragOver?.(e, data, ghost);
       }}
       onDragLeave={(e) => {
         if (shouldAccept(e.dataTransfer?.types)) e.preventDefault();
-        const id = +e.dataTransfer?.types.find((t) => t.startsWith("id-"))!
-          .slice(3)!;
-        const ghost = DragStore.get().context.ghostElements.get(id);
-        onDragLeave?.(e, ghost);
+        const ghost = getGhostFromEvent(e);
+        const data = getDataFromEvent(e);
+        onDragLeave?.(e, data, ghost);
       }}
       onDrop={(e) => {
-        const id = +e.dataTransfer?.getData("data-id")!;
-        const data = DragStore.get().context.data.get(id);
+        console.log(e);
+
+        const data = getDataFromEvent(e);
         onDrop?.(e, data);
       }}
     >

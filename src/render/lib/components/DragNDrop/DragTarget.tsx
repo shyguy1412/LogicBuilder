@@ -33,7 +33,7 @@ const createGhostElement = (
 ) => {
   const id = Date.now();
   //hides the native ghost image
-  ev.dataTransfer?.setData(`id-${id}`, "");
+  ev.dataTransfer?.setData(`ghost-${id}`, "");
   ev.dataTransfer?.setDragImage(document.head, 0, 0);
 
   const ghostImageElement = document.createElement("div");
@@ -91,7 +91,7 @@ export const DragTarget = memo(
         draggable={true}
         onDragStart={(e) => {
           e.dataTransfer?.setData(group, e.currentTarget.id);
-          e.dataTransfer?.setData("data-id", id + "");
+          e.dataTransfer?.setData("data-" + id, "");
           if (ghostElement) createGhostElement(e, ghostElement);
           onDragStart?.(e);
         }}
