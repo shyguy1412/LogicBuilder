@@ -1,6 +1,6 @@
 import style from "./Workspace.module.css";
 import { h } from "preact";
-import { useMemo } from "preact/hooks";
+import { useMemo, useState } from "preact/hooks";
 import { createAtom } from "@xstate/store";
 import { Lumber } from "@/lib/log/Lumber";
 import { GridDraggable, GridSurface } from "@/lib/components/GridSurface";
@@ -15,6 +15,7 @@ export function Workspace({}: Props) {
   const pos = useMemo(() => createAtom({ x: 0, y: 0 }), []);
   const offset = useMemo(() => createAtom({ x: 0, y: 0 }), []);
   const zoom = useMemo(() => createAtom(1), []);
+  const [components, setComponents] = useState<{ x: number; y: number }[]>([]);
 
   return (
     <GridSurface
@@ -29,49 +30,40 @@ export function Workspace({}: Props) {
       <DropTarget
         class={style.workspace}
         accept={DROP_GROUPS.CIRCUIT_COMPONENT}
-        onDragOver={(ev, ghost) => {
+        onDragOver={(ev, data, ghost) => {
           if (!ghost) return;
 
           ev.currentTarget.append(ghost);
 
           const currentOffset = offset.get();
-          const ghostPos = ghost.getBoundingClientRect();
+          const ghostRect = ghost.getBoundingClientRect();
           const boundingRect = ev.currentTarget.getBoundingClientRect();
           const em = +getComputedStyle(ev.currentTarget).fontSize.slice(0, -2);
 
-          const origin = {
-            x: currentOffset.x + boundingRect.x,
-            y: currentOffset.y + boundingRect.y,
-          };
-
-          const elementPos = {
-            x: ((Math.round((ghostPos.x - origin.x) / em) * em) +
-              currentOffset.x),
-            y: ((Math.round((ghostPos.y - origin.y) / em) * em) +
-              currentOffset.y),
+          const ghostPos = {
+            x: ghostRect.x - boundingRect.x * 2,
+            y: ghostRect.y - boundingRect.y * 2,
           };
 
           const posOnGrid = {
-            x: Math.round(
-              (ghostPos.x - boundingRect.x * 2 - currentOffset.x) / em,
-            ),
-            y: Math.round(
-              (ghostPos.y - boundingRect.y * 2 - currentOffset.y) / em,
-            ),
+            x: Math.round((ghostPos.x - currentOffset.x) / em),
+            y: Math.round((ghostPos.y - currentOffset.y) / em),
           };
 
           ghost.setAttribute(
             "data-pos-x",
-            (posOnGrid.x * em) + currentOffset.x + "",
+            (posOnGrid.x * em) + (currentOffset.x) + "",
           );
           ghost.setAttribute(
             "data-pos-y",
-            (posOnGrid.y * em) + currentOffset.y + "",
+            (posOnGrid.y * em) + (currentOffset.y) + "",
           );
+          Object.assign(data as any, { ...posOnGrid });
         }}
-        onDragLeave={(_, ghost) => document.body.append(ghost!)}
-        onDrop={(e, data) => {
-          console.log(data);
+        onDragLeave={(_event, _data, ghost) => document.body.append(ghost!)}
+        onDrop={(e, data: any) => {
+          Lumber.log("EVENT", `COMPONENT DROPPED AT X:${data.x};Y:${data.y}`);
+          setComponents([...components, data as any]);
         }}
       >
         <GridDraggable
@@ -83,6 +75,16 @@ export function Workspace({}: Props) {
           <div style={{ background: "red", width: "100%", height: "100%" }}>
           </div>
         </GridDraggable>
+        {...components.map((pos) => (
+          <GridDraggable
+            {...pos}
+            width={3}
+            height={5}
+          >
+            <div style={{ background: "red", width: "100%", height: "100%" }}>
+            </div>
+          </GridDraggable>
+        ))}
       </DropTarget>
     </GridSurface>
   );
