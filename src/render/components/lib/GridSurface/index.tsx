@@ -93,16 +93,20 @@ export function GridSurface(
         const currentOffset = offset.get();
         const currentZoom = zoom.get();
 
-        const newZoom = currentZoom - (deltaY / 500);
+        //zoom factor describes how far each point should move away from origin
+        //when zoomed
+        //zoom factor of 2 means evey point moves twice as far away
+        //this makes the percieved zoom constant
+        const zoomFactor = Math.sign(deltaY) * 0.1;
+
+        const newZoom = currentZoom - (zoomFactor * currentZoom);
         if (newZoom > (maxZoom ?? 10) || newZoom < (minZoom ?? 0.5)) return;
 
         const boundingBox = currentTarget.getBoundingClientRect();
 
-        const delta = 1 - (newZoom / currentZoom);
-
         const moveAmount = {
-          x: delta * (clientX - boundingBox.x - currentOffset.x),
-          y: delta * (clientY - boundingBox.y - currentOffset.y),
+          x: zoomFactor * (clientX - boundingBox.x - currentOffset.x),
+          y: zoomFactor * (clientY - boundingBox.y - currentOffset.y),
         };
 
         const zoomOffset = {
