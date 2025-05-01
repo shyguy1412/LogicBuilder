@@ -6,6 +6,7 @@
 
   user-select: none;
 
+  z-index: 9999;
   /*Make window draggable*/
   -webkit-app-region: drag;
 }
