@@ -6,11 +6,11 @@ import {
   Router,
   RouteTable,
   useRouter,
-} from "@/components/lib/Router";
+} from "@/lib/Router";
 import { IconType } from "react-icons";
 import { memo } from "preact/compat";
 import { createAtom } from "@xstate/store";
-import { Lumber } from "@/components/lib/log/Lumber";
+import { Lumber } from "@/lib/log/Lumber";
 
 export type Menu = {
   name: string;

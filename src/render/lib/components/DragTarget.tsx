@@ -1,4 +1,4 @@
-import { Lumber } from "@/components/lib/log/Lumber";
+import { Lumber } from "@/lib/log/Lumber";
 import { h } from "preact";
 import { HTMLAttributes, memo } from "preact/compat";
 

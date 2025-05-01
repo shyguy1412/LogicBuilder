@@ -2,9 +2,9 @@ import style from "./Workspace.module.css";
 import { h } from "preact";
 import { useMemo } from "preact/hooks";
 import { createAtom } from "@xstate/store";
-import { Lumber } from "@/components/lib/log/Lumber";
-import { GridDraggable, GridSurface } from "@/components/lib/GridSurface";
-import { DropTarget } from "@/components/lib/DropTarget";
+import { Lumber } from "@/lib/log/Lumber";
+import { GridDraggable, GridSurface } from "@/lib/components/GridSurface";
+import { DropTarget } from "@/lib/components/DropTarget";
 import { DROP_GROUPS } from "@/components/App";
 
 type Props = {};

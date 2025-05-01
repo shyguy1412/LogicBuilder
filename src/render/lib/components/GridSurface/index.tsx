@@ -4,7 +4,7 @@ import { PropsWithChildren, TargetedEvent } from "preact/compat";
 import { useCallback, useEffect, useMemo, useRef } from "preact/hooks";
 import { h } from "preact";
 
-import { Lumber } from "@/components/lib/log/Lumber";
+import { Lumber } from "@/lib/log/Lumber";
 import { createAtom } from "@xstate/store";
 
 type Point = { x: number; y: number };

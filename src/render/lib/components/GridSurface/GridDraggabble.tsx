@@ -10,7 +10,7 @@ import {
 } from "preact/compat";
 import style from "./GirdSurface.module.css";
 import { createAtom } from "@xstate/store";
-import { Lumber } from "@/components/lib/log/Lumber";
+import { Lumber } from "@/lib/log/Lumber";
 
 type Props = {
   width: number;

@@ -3,7 +3,7 @@ import style from "./Titlebar.module.css";
 import { IconType } from "react-icons";
 import { FaRegSquare, FaWindowMinimize, FaX } from "react-icons/fa6";
 import { memo } from "preact/compat";
-import { Lumber } from "@/components/lib/log/Lumber";
+import { Lumber } from "@/lib/log/Lumber";
 
 type Props = {
   title: string;

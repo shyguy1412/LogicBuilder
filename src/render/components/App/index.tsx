@@ -1,12 +1,12 @@
 import { h } from "preact";
 import style from "./App.module.css";
-import { Menu, Sidebar } from "@/components/lib/Sidebar";
+import { Menu, Sidebar } from "@/lib/components/Sidebar";
 import { Statusbar } from "@/components/Statusbar";
-import { createRouter, useRouter } from "@/components/lib/Router";
-import { Titlebar } from "@/components/lib/Titlebar";
+import { createRouter, useRouter } from "@/lib/Router";
+import { Titlebar } from "@/lib/components/Titlebar";
 import { PiCircuitry, PiCpu, PiFile, PiGear } from "react-icons/pi";
 import { useCallback } from "preact/hooks";
-import { Lumber } from "@/components/lib/log/Lumber";
+import { Lumber } from "@/lib/log/Lumber";
 import { Workspace } from "@/components/Workspace";
 import { ComponentList } from "@/components/ComponentList";
 

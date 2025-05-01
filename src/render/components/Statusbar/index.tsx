@@ -1,7 +1,7 @@
 import { h } from "preact";
 import style from "./Statusbar.module.css";
 import { memo } from "preact/compat";
-import { Lumber } from "@/components/lib/log/Lumber";
+import { Lumber } from "@/lib/log/Lumber";
 
 type Props = {};
 
