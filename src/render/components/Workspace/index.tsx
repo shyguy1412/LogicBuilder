@@ -1,9 +1,11 @@
-import "./Workspace.module.css";
+import style from "./Workspace.module.css";
 import { h } from "preact";
 import { useMemo } from "preact/hooks";
 import { createAtom } from "@xstate/store";
 import { Lumber } from "@/components/lib/log/Lumber";
-import { GridDraggable, GridSurface } from "@/components/GridSurface";
+import { GridDraggable, GridSurface } from "@/components/lib/GridSurface";
+import { DropTarget } from "@/components/lib/DropTarget";
+import { DROP_GROUPS } from "@/components/App";
 
 type Props = {};
 
@@ -13,34 +15,32 @@ export function Workspace({}: Props) {
   const pos = useMemo(() => createAtom({ x: 0, y: 0 }), []);
   const offset = useMemo(() => createAtom({ x: 0, y: 0 }), []);
   const zoom = useMemo(() => createAtom(1), []);
-  // useSelector(zoom, (pos) => pos);
-  // useSelector(offset, (pos) => pos);
-  // useSelector(pos, (pos) => pos);
-
-  // useEffect(() => {
-  //   const interval = setInterval(
-  //     () => pos.set({ x: pos.get().x + 1, y: 0 }),
-  //     100,
-  //   );
-  //   return () => clearInterval(interval);
-  // });
-  // const [{ x, y }, setPos] = useState({ x: 0, y: 0 });
 
   return (
-    <GridSurface
-      zoom={1.4}
-      offsetX={offset.get().x}
-      offsetY={offset.get().y}
-      onZoomUpdate={(newZoom) => zoom.set(newZoom)}
-      onOffsetUpdate={(newOffset) => offset.set(newOffset)}
+    <DropTarget
+      class={style.workspace}
+      accept={DROP_GROUPS.CIRCUIT_COMPONENT}
+      onDrop={(e) => {
+        console.log(e.dataTransfer?.getData?.("data"));
+      }}
     >
-      <GridDraggable
-        width={3}
-        height={5}
-        {...pos.get()}
-        onPosUpdate={(newPos) => pos.set(newPos)}
+      <GridSurface
+        zoom={zoom.get()}
+        offsetX={offset.get().x}
+        offsetY={offset.get().y}
+        onZoomUpdate={(newZoom) => zoom.set(newZoom)}
+        // onOffsetUpdate={(newOffset) => offset.set(newOffset)}
       >
-      </GridDraggable>
-    </GridSurface>
+        <GridDraggable
+          width={3}
+          height={5}
+          {...pos.get()}
+          onPosUpdate={(newPos) => pos.set(newPos)}
+        >
+          <div style={{ background: "red", width: "100%", height: "100%" }}>
+          </div>
+        </GridDraggable>
+      </GridSurface>
+    </DropTarget>
   );
 }
