@@ -16,7 +16,7 @@ const i18n = {
   },
 };
 
-app.disableHardwareAcceleration()
+app.disableHardwareAcceleration();
 
 function createMenu(): Menu {
   const menu = new Menu();

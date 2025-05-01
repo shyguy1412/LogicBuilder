@@ -1,12 +1,7 @@
 import { h } from "preact";
 import style from "./Sidebar.module.css";
 import { useCallback, useEffect, useMemo, useRef } from "preact/hooks";
-import {
-  createRouter,
-  Router,
-  RouteTable,
-  useRouter,
-} from "@/lib/Router";
+import { createRouter, Router, RouteTable, useRouter } from "@/lib/Router";
 import { IconType } from "react-icons";
 import { memo } from "preact/compat";
 import { createAtom } from "@xstate/store";
