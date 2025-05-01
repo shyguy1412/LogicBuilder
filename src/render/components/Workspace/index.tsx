@@ -43,8 +43,8 @@ export function Workspace({}: Props) {
           };
 
           const elementPos = {
-            x: Math.round((ghostPos.x - origin.x) / em) * em + boundingRect.x,
-            y: Math.round((ghostPos.y - origin.y) / em) * em + boundingRect.y,
+            x: Math.round((ghostPos.x - origin.x) / em) * em + boundingRect.x + currentOffset.x,
+            y: Math.round((ghostPos.y - origin.y) / em) * em + boundingRect.y + currentOffset.y,
           };
 
           ghost.setAttribute("data-pos-x", elementPos.x + "");
