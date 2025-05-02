@@ -27,10 +27,10 @@
   "homepage": "https://github.com/shyguy1412/electron-esbuild-template#readme",
   "devDependencies": {
     "concurrently": "^9.1.2",
+    "electron": "^36.1.0",
     "electron-builder": "^26.0.12",
-    "electron": "^35.1.5",
-    "esbuild": "^0.25.2",
-    "nodemon": "^3.1.9",
+    "esbuild": "^0.25.3",
+    "nodemon": "^3.1.10",
     "typescript": "^5.8.3",
     "typescript-plugin-css-modules": "^5.1.0",
     "wait-on": "^8.0.3"
@@ -40,7 +40,6 @@
     "@xstate/store": "^3.5.1",
     "normalize.css": "^8.0.1",
     "preact": "^10.26.5",
-    "react-icons": "^5.5.0",
-    "react-resizable-panels": "^2.1.9"
+    "react-icons": "^5.5.0"
   }
 }
