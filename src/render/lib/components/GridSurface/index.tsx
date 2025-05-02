@@ -14,6 +14,7 @@ type Props = {
   zoom: number;
   minZoom?: number;
   maxZoom?: number;
+  zoomSpeed?: number;
   offsetX?: number;
   offsetY?: number;
   onZoomUpdate?: (zoom: number) => void;
@@ -27,6 +28,7 @@ export function GridSurface(
     children,
     minZoom,
     maxZoom,
+    zoomSpeed,
     ...props
   }: PropsWithChildren<Props>,
 ) {
@@ -78,7 +80,7 @@ export function GridSurface(
         //when zoomed
         //zoom factor of 2 means evey point moves twice as far away
         //this makes the percieved zoom constant
-        const zoomFactor = Math.sign(deltaY) * 0.1;
+        const zoomFactor = Math.sign(deltaY) * (zoomSpeed ?? 0.1);
 
         const newZoom = zoom - (zoomFactor * zoom);
         if (newZoom > (maxZoom ?? 10) || newZoom < (minZoom ?? 0.5)) return;
