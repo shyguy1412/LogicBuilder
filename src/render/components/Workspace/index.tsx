@@ -11,42 +11,6 @@ import { Point } from "@/lib/types/Geometry";
 
 type Props = {};
 
-const calculatePositionOnGrid = (
-  ghost: HTMLDivElement,
-  grid: HTMLDivElement,
-  offset: Point,
-) => {
-  const ghostRect = ghost.getBoundingClientRect();
-  const boundingRect = grid.getBoundingClientRect();
-  const em = +getComputedStyle(grid).fontSize.slice(0, -2);
-
-  //If the ghost is a child of the grid we need to compensate for client offset twice
-  //once to adjust for the offset of the grid itself and once for the ghost inside the grid
-  if (ghost.parentElement == grid) {
-    boundingRect.x *= 2;
-    boundingRect.y *= 2;
-  }
-
-  const posOnGrid = {
-    x: Math.round((ghostRect.x - boundingRect.x - offset.x) / em),
-    y: Math.round((ghostRect.y - boundingRect.y - offset.y) / em),
-  };
-
-  return posOnGrid;
-};
-
-const snapGhostIntoGrid = (
-  ghost: HTMLDivElement,
-  grid: HTMLDivElement,
-  offset: Point,
-  position: Point,
-) => {
-  if (ghost.parentElement != grid) grid.append(ghost);
-  const em = +getComputedStyle(grid).fontSize.slice(0, -2);
-  ghost.setAttribute("data-pos-x", (position.x * em + offset.x) + "");
-  ghost.setAttribute("data-pos-y", (position.y * em + offset.y) + "");
-};
-
 export function Workspace({}: Props) {
   Lumber.log(Lumber.RENDER, "WORKSPACE RENDER");
 
@@ -97,4 +61,40 @@ export function Workspace({}: Props) {
       </DropTarget>
     </GridSurface>
   );
+}
+
+function calculatePositionOnGrid(
+  ghost: HTMLDivElement,
+  grid: HTMLDivElement,
+  offset: Point,
+) {
+  const ghostRect = ghost.getBoundingClientRect();
+  const boundingRect = grid.getBoundingClientRect();
+  const em = +getComputedStyle(grid).fontSize.slice(0, -2);
+
+  //If the ghost is a child of the grid we need to compensate for client offset twice
+  //once to adjust for the offset of the grid itself and once for the ghost inside the grid
+  if (ghost.parentElement == grid) {
+    boundingRect.x *= 2;
+    boundingRect.y *= 2;
+  }
+
+  const posOnGrid = {
+    x: Math.round((ghostRect.x - boundingRect.x - offset.x) / em),
+    y: Math.round((ghostRect.y - boundingRect.y - offset.y) / em),
+  };
+
+  return posOnGrid;
+}
+
+function snapGhostIntoGrid(
+  ghost: HTMLDivElement,
+  grid: HTMLDivElement,
+  offset: Point,
+  position: Point,
+) {
+  if (ghost.parentElement != grid) grid.append(ghost);
+  const em = +getComputedStyle(grid).fontSize.slice(0, -2);
+  ghost.setAttribute("data-pos-x", (position.x * em + offset.x) + "");
+  ghost.setAttribute("data-pos-y", (position.y * em + offset.y) + "");
 }
