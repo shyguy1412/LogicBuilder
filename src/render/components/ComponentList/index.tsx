@@ -1,4 +1,5 @@
 import { DROP_GROUPS } from "@/components/App";
+import { Gate } from "@/components/circuit-components/Gate";
 import { DragTarget } from "@/lib/components/DragNDrop";
 import { h } from "preact";
 import { memo } from "preact/compat";
@@ -8,13 +9,9 @@ export const ComponentList = memo(() => {
     <DragTarget
       group={DROP_GROUPS.CIRCUIT_COMPONENT}
       data={{}}
-      ghostElement={() => (
-        <div style={{ background: "red", width: "3em", height: "5em" }}>
-        </div>
-      )}
+      ghostElement={() => <Gate></Gate>}
     >
-      <div style={{ background: "red", width: "3em", height: "5em" }}>
-      </div>
+      <Gate></Gate>
     </DragTarget>
   );
 });
