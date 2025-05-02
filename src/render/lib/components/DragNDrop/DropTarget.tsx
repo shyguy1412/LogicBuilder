@@ -2,12 +2,8 @@ import { DragStore } from "@/lib/components/DragNDrop/DragTarget";
 import style from "./DragNDrop.module.css";
 import { Lumber } from "@/lib/log/Lumber";
 import { h } from "preact";
-import {
-  HTMLAttributes,
-  memo,
-  TargetedEvent,
-  useCallback,
-} from "preact/compat";
+import { HTMLAttributes, memo, TargetedEvent } from "preact/compat";
+import { useCallback } from "preact/hooks";
 
 type Props =
   & {
