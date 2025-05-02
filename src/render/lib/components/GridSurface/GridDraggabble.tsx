@@ -18,7 +18,9 @@ type Props = {
   height: number;
   x: number;
   y: number;
-  onPosUpdate?: (pos: { x: number; y: number }) => void;
+  onDragStart?: (pos: Point) => void;
+  onDrag?: (pos: Point) => void;
+  onDragStop?: (pos: Point) => void;
 };
 
 export const GridDraggable = memo((
@@ -26,22 +28,25 @@ export const GridDraggable = memo((
     width,
     height,
     children,
+    onDragStart,
+    onDrag,
+    onDragStop,
     ...props
   }: PropsWithChildren<Props>,
 ) => {
+  Lumber.log(Lumber.RENDER, "GRID DRAGGABLE RENDER");
   const offset = useContext(OffsetContext).get();
 
   //this lets the component update its own position
   //position changes from the parent will still cause updates
-  const [pos, setPos] = useControlledState(
+  const [{ x, y }, setPos, posAtom] = useControlledState(
     (x, y) => ({ x, y }),
     [props.x, props.y],
-    props.onPosUpdate,
+    onDrag,
   );
   const [grabOffset, setGrabOffset] = useState<Point>();
 
   const ref = useRef<HTMLDivElement>(null);
-  Lumber.log(Lumber.RENDER, "GRID DRAGGABLE RENDER", ref);
 
   const movehandler = useCallback((ev: MouseEvent) => {
     if (!ref.current) return;
@@ -59,28 +64,31 @@ export const GridDraggable = memo((
     };
 
     //Keeping the old pos object if x and y didnt change prevents unneccessary rerenders
-    setPos((oldPos) => {
-      if (oldPos.x == pos.x && oldPos.y == pos.y) return oldPos;
-      return pos;
-    });
+    // setPos((oldPos) => {
+    //   if (oldPos.x == pos.x && oldPos.y == pos.y) return oldPos;
+    //   return pos;
+    // });
+    setPos(pos);
   }, [grabOffset]);
 
   useEffect(() => {
     Lumber.log(Lumber.HOOK, "EFFECT - GridDraggable move");
     if (!grabOffset) return;
 
-    window.addEventListener("mousemove", movehandler);
+    const controller = new AbortController();
+    const { signal } = controller;
+
+    window.addEventListener("mousemove", movehandler, { signal });
     window.addEventListener("mouseup", () => {
       document.body.style.cursor = "";
-      window.removeEventListener("mousemove", movehandler);
       setGrabOffset(undefined);
-    }, {
-      once: true,
-    });
+      controller.abort();
+      onDragStop?.(posAtom.get());
+    }, { once: true, signal });
     document.body.style.cursor = "grabbing"; //! todo overwrite other cursors
 
-    return () => window.removeEventListener("mousemove", movehandler);
-  }, [grabOffset]);
+    return () => controller.abort();
+  }, [grabOffset, posAtom, onDragStop]);
 
   return (
     <div
@@ -89,8 +97,8 @@ export const GridDraggable = memo((
       style-grid-draggable=""
       data-scale-w={Math.round(width)}
       data-scale-h={Math.round(height)}
-      data-pos-x={Math.round(pos.x)}
-      data-pos-y={Math.round(pos.y)}
+      data-pos-x={Math.round(x)}
+      data-pos-y={Math.round(y)}
       onMouseDown={(event) => {
         event.stopPropagation();
         const boundingBox = event.currentTarget.getBoundingClientRect();
@@ -99,6 +107,7 @@ export const GridDraggable = memo((
           y: event.clientY - boundingBox.y,
         };
         setGrabOffset(grabOffset);
+        onDragStart?.(props);
       }}
     >
       {children}
