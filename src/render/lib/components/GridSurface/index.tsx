@@ -82,8 +82,11 @@ export function GridSurface(
         //this makes the percieved zoom constant
         const zoomFactor = Math.sign(deltaY) * (zoomSpeed ?? 0.1);
 
-        const newZoom = zoom - (zoomFactor * zoom);
-        if (newZoom > (maxZoom ?? 10) || newZoom < (minZoom ?? 0.5)) return;
+        const newZoom = Math.min(
+          maxZoom ?? 10,
+          Math.max(minZoom ?? 0, zoom - (zoomFactor * zoom)),
+        );
+        if (newZoom == zoom) return;
 
         const boundingBox = currentTarget.getBoundingClientRect();
 
