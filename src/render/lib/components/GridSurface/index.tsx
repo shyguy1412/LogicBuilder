@@ -80,13 +80,15 @@ export function GridSurface(
         //when zoomed
         //zoom factor of 2 means evey point moves twice as far away
         //this makes the percieved zoom constant
-        const zoomFactor = Math.sign(deltaY) * (zoomSpeed ?? 0.1);
+        const targetZoomFactor = Math.sign(deltaY) * (zoomSpeed ?? 0.1);
 
         const newZoom = Math.min(
           maxZoom ?? 10,
-          Math.max(minZoom ?? 0, zoom - (zoomFactor * zoom)),
+          Math.max(minZoom ?? 0, zoom - (targetZoomFactor * zoom)),
         );
         if (newZoom == zoom) return;
+
+        const zoomFactor = 1 - (newZoom / zoom);
 
         const boundingBox = currentTarget.getBoundingClientRect();
 
