@@ -1,0 +1,14 @@
+.gate {
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+
+  color: var(--clr-foreground-a0);
+  background-color: var(--clr-surface-a0);
+  border: max(1px, 0.05em) solid currentColor;
+
+  padding-left: 0.5em;
+  padding-top: 0.3em;
+
+  font-size: 1.3em;
+}

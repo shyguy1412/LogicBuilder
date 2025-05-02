@@ -6,21 +6,53 @@ import { Lumber } from "@/lib/log/Lumber";
 import { GridSurface } from "@/lib/components/GridSurface";
 import { DropTarget } from "@/lib/components/DragNDrop";
 import { DROP_GROUPS } from "@/components/App";
-import { Gate } from "@/components/circuit-components/Gate";
+import { Gate, LogicOperation } from "@/components/circuit-components/Gate";
 import { Point } from "@/lib/types/Geometry";
 import { useSelector } from "@xstate/store/react";
 
 type Props = {};
 
+interface ICircuitComponent {
+  id: string;
+  pos: Point;
+  type: string;
+}
+
+interface IGateComponent extends ICircuitComponent {
+  type: "gate";
+  op: LogicOperation;
+}
+
+const createGateComponent = (x: number, y: number, op: LogicOperation) => ({
+  type: "gate",
+  op,
+  pos: { x, y },
+  id: Date(),
+} satisfies IGateComponent);
+
 const ComponentStore = createStore({
-  context: { components: { 0: { x: 0, y: 0 } } as Record<string, Point> },
+  context: {
+    components: [createGateComponent(0, 0, "and")] as ICircuitComponent[],
+  },
   on: {
-    setComponent: (context, event: { id: string; pos: Point }) => ({
-      components: {
-        ...context.components,
-        [event.id]: event.pos,
-      },
+    addComponent: (context, event: { component: ICircuitComponent }) => ({
+      components: [...context.components, event.component],
     }),
+    moveComponent: (context, event: { id: string; pos: Point }) => {
+      const componentIndex = context.components.findIndex((el) =>
+        el.id == event.id
+      );
+      if (componentIndex < 0) throw new Error("Invalid ID");
+      const component = context.components[componentIndex];
+
+      component.pos = event.pos;
+      return {
+        components: [
+          ...context.components.filter((c) => c.id != event.id),
+          component,
+        ],
+      };
+    },
   },
 });
 
@@ -30,20 +62,19 @@ export function Workspace({}: Props) {
   const offsetStore = useMemo(() => createAtom({ x: 0, y: 0 }), []);
   const offset = offsetStore.get();
 
-  const [zoom, setZoom] = useState(5);
+  const [zoom, setZoom] = useState(1);
 
-  const componentsMap = useSelector(
+  const components = useSelector(
     ComponentStore,
     ({ context }) => context.components,
   );
 
-  const components = useMemo(() => Object.entries(componentsMap), [
-    componentsMap,
-  ]);
-
   return (
     <GridSurface
       zoom={zoom}
+      minZoom={0.35}
+      maxZoom={600}
+      zoomSpeed={0.06}
       offsetX={offset.x}
       offsetY={offset.y}
       onOffsetUpdate={(o) => offsetStore.set(o)}
@@ -74,18 +105,26 @@ export function Workspace({}: Props) {
         onDragLeave={(_event, _data, ghost) => document.body.append(ghost!)}
         onDrop={(e, data: any) => {
           Lumber.log("EVENT", `COMPONENT DROPPED AT X:${data.x};Y:${data.y}`);
-          ComponentStore.trigger.setComponent({
-            id: Date.now() + "",
-            pos: { ...data },
+          ComponentStore.trigger.addComponent({
+            component: createGateComponent(
+              data.x,
+              data.y,
+              Object.values(
+                LogicOperation,
+              )[Date.now() % Object.keys(LogicOperation).length],
+            ),
           });
         }}
       >
-        {...components.map(([id, pos]) => (
+        {...components.map(({ id, pos, op }) => (
           <Gate
             key={id}
             {...pos}
-            onPosUpdate={(pos) =>
-              ComponentStore.trigger.setComponent({ id, pos })}
+            op={op}
+            onDragStart={(pos) =>
+              ComponentStore.trigger.moveComponent({ id, pos })}
+            onDragStop={(pos) =>
+              ComponentStore.trigger.moveComponent({ id, pos })}
           >
           </Gate>
         ))}

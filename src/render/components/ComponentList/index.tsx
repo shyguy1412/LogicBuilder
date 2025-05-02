@@ -9,9 +9,9 @@ export const ComponentList = memo(() => {
     <DragTarget
       group={DROP_GROUPS.CIRCUIT_COMPONENT}
       data={{}}
-      ghostElement={() => <Gate></Gate>}
+      ghostElement={() => <Gate op="and"></Gate>}
     >
-      <Gate></Gate>
+      <Gate op="and"></Gate>
     </DragTarget>
   );
 });

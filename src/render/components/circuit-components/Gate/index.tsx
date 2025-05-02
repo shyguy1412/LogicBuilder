@@ -1,17 +1,50 @@
+import style from "./Gate.module.css";
 import { GridDraggable } from "@/lib/components/GridSurface";
 import { useControlledState } from "@/lib/components/hooks";
 import { Lumber } from "@/lib/log/Lumber";
 import { Point } from "@/lib/types/Geometry";
 import { h } from "preact";
-import { memo } from "preact/compat";
+import { memo, useMemo } from "preact/compat";
+
+export const LogicOperation = {
+  NOT: "not",
+  AND: "and",
+  NAND: "nand",
+  OR: "or",
+  NOR: "nor",
+  XOR: "xor",
+  XNOR: "xnor",
+} as const;
+export type LogicOperation = typeof LogicOperation[keyof typeof LogicOperation];
+
+/**
+ * If the last char is a `!` the gate will draw a not indicator at the output pin
+ */
+export const LogicSymbol = {
+  not: "1!",
+  and: "&",
+  nand: "&!",
+  or: "≥1",
+  nor: "≥1!",
+  xor: "=1",
+  xnor: "=1!",
+} satisfies { [op in LogicOperation]: string };
 
 type Props = {
   x?: number;
   y?: number;
-  onPosUpdate?: (pos: Point) => void;
+  op: LogicOperation;
+  onDragStart?: (pos: Point) => void;
+  onDrag?: (pos: Point) => void;
+  onDragStop?: (pos: Point) => void;
 };
 
-export const Gate = memo(({ onPosUpdate, ...props }: Props) => {
+export const Gate = memo(({
+  onDragStart,
+  onDrag,
+  onDragStop,
+  ...props
+}: Props) => {
   Lumber.log(Lumber.RENDER, "GATE RENDER");
 
   //this lets a Gate manage it position internally.
@@ -20,27 +53,29 @@ export const Gate = memo(({ onPosUpdate, ...props }: Props) => {
   const [{ x, y }, setPos] = useControlledState(
     (x, y) => ({ x: x ?? 0, y: y ?? 0 }),
     [props.x, props.y],
-    onPosUpdate,
+    onDrag,
+  );
+
+  const symbol = useMemo(
+    () => LogicSymbol[props.op].replace(/!$/, ""),
+    [props.op],
   );
 
   return (
     // <DragTarget group="a" data={{}}>
     <GridDraggable
       width={3}
-      height={5}
+      height={4}
       x={x ?? 0}
       y={y ?? 0}
-      // onPosUpdate={setPos}
+      onDragStart={onDragStart}
+      onDrag={setPos}
+      onDragStop={onDragStop}
     >
       <div
-        style={{
-          background: "red",
-          width: "100%",
-          height: "100%",
-          border: "1px solid black",
-          boxSizing: "border-box",
-        }}
+        class={style.gate}
       >
+        {symbol}
       </div>
     </GridDraggable>
     // </DragTarget>
