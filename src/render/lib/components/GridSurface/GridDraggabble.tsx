@@ -35,7 +35,7 @@ export const GridDraggable = memo((
   }: PropsWithChildren<Props>,
 ) => {
   Lumber.log(Lumber.RENDER, "GRID DRAGGABLE RENDER");
-  const offset = useContext(OffsetContext).get();
+  const offsetAtom = useContext(OffsetContext);
 
   //this lets the component update its own position
   //position changes from the parent will still cause updates
@@ -51,6 +51,7 @@ export const GridDraggable = memo((
   const movehandler = useCallback((ev: MouseEvent) => {
     if (!ref.current) return;
     if (!grabOffset) return;
+    const offset = offsetAtom.get();
     const em = +getComputedStyle(ref.current).fontSize.slice(0, -2);
     const boundingBox = ref.current.parentElement!.getBoundingClientRect();
 
@@ -69,7 +70,7 @@ export const GridDraggable = memo((
     //   return pos;
     // });
     setPos(pos);
-  }, [grabOffset]);
+  }, [grabOffset, offsetAtom]);
 
   useEffect(() => {
     Lumber.log(Lumber.HOOK, "EFFECT - GridDraggable move");
