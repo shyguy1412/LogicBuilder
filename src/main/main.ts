@@ -55,8 +55,8 @@ function createMenu(): Menu {
 
 function createWindow() {
   // Create the browser window.
-  const width = 1300;
-  const height = 700;
+  const width = 1600;
+  const height = 900;
   const mainWindow = new BrowserWindow({
     width: width,
     height: height,
