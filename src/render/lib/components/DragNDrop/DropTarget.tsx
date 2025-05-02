@@ -14,21 +14,21 @@ type Props =
     accept: string | string[];
     onDrop?: (
       ev: TargetedEvent<HTMLDivElement, DragEvent>,
-      data?: unknown,
+      data?: any,
     ) => void;
     onDragEnter?: (
       ev: TargetedEvent<HTMLDivElement, DragEvent>,
-      data?: unknown,
+      data?: any,
       ghost?: HTMLDivElement,
     ) => void;
     onDragOver?: (
       ev: TargetedEvent<HTMLDivElement, DragEvent>,
-      data?: unknown,
+      data?: any,
       ghost?: HTMLDivElement,
     ) => void;
     onDragLeave?: (
       ev: TargetedEvent<HTMLDivElement, DragEvent>,
-      data?: unknown,
+      data?: any,
       ghost?: HTMLDivElement,
     ) => void;
   }

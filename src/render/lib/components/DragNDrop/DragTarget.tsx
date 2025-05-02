@@ -6,21 +6,21 @@ import { HTMLAttributes, memo, TargetedEvent, useEffect } from "preact/compat";
 
 type Props = {
   group: string;
-  data: unknown;
+  data: any;
   ghostElement?: AnyComponent;
 } & HTMLAttributes<HTMLDivElement>;
 
 export const DragStore = createStore({
   context: {
     ghostElements: new Map<number, HTMLDivElement>(),
-    data: new Map<number, unknown>(),
+    data: new Map<number, any>(),
   },
   on: {
     addGhost: (context, event: { id: number; element: HTMLDivElement }) =>
       void context.ghostElements.set(event.id, event.element),
     removeGhost: (context, event: { id: number }) =>
       void context.ghostElements.delete(event.id),
-    setData: (context, event: { id: number; data: unknown }) =>
+    setData: (context, event: { id: number; data: any }) =>
       void context.data.set(event.id, event.data),
     removeData: (context, event: { id: number }) =>
       void context.data.delete(event.id),
