@@ -1,51 +1,72 @@
 import style from "./Workspace.module.css";
 import { h } from "preact";
 import { useMemo, useState } from "preact/hooks";
-import { createAtom } from "@xstate/store";
+import { createAtom, createStore } from "@xstate/store";
 import { Lumber } from "@/lib/log/Lumber";
 import { GridSurface } from "@/lib/components/GridSurface";
 import { DropTarget } from "@/lib/components/DragNDrop";
 import { DROP_GROUPS } from "@/components/App";
 import { Gate } from "@/components/circuit-components/Gate";
 import { Point } from "@/lib/types/Geometry";
+import { useSelector } from "@xstate/store/react";
 
 type Props = {};
+
+const ComponentStore = createStore({
+  context: { components: { 0: { x: 0, y: 0 } } as Record<string, Point> },
+  on: {
+    setComponent: (context, event: { id: string; pos: Point }) => ({
+      components: {
+        ...context.components,
+        [event.id]: event.pos,
+      },
+    }),
+  },
+});
 
 export function Workspace({}: Props) {
   Lumber.log(Lumber.RENDER, "WORKSPACE RENDER");
 
-  const offset = useMemo(() => createAtom({ x: 0, y: 0 }), []);
-  const zoom = useMemo(() => createAtom(1), []);
-  const [components, setComponents] = useState<Point[]>([]);
+  const offsetStore = useMemo(() => createAtom({ x: 0, y: 0 }), []);
+  const offset = offsetStore.get();
+
+  const [zoom, setZoom] = useState(5);
+
+  const componentsMap = useSelector(
+    ComponentStore,
+    ({ context }) => context.components,
+  );
+
+  const components = useMemo(() => Object.entries(componentsMap), [
+    componentsMap,
+  ]);
 
   return (
     <GridSurface
-      zoom={zoom.get()}
-      offsetX={offset.get().x}
-      offsetY={offset.get().y}
-      onZoomUpdate={(newZoom) => zoom.set(newZoom)}
-      onOffsetUpdate={(newOffset) => offset.set(newOffset)}
+      zoom={zoom}
+      offsetX={offset.x}
+      offsetY={offset.y}
+      onOffsetUpdate={(o) => offsetStore.set(o)}
     >
       <DropTarget
         class={style.workspace}
         accept={DROP_GROUPS.CIRCUIT_COMPONENT}
         onDragOver={(ev, data, ghost) => {
           if (!ghost) return;
+          const offset = offsetStore.get();
 
           const positionOnGrid = calculatePositionOnGrid(
             ghost,
             ev.currentTarget,
-            offset.get(),
+            offset,
           );
 
           snapGhostIntoGrid(
             ghost,
             ev.currentTarget,
-            offset.get(),
+            offset,
             positionOnGrid,
           );
-
-          console.log(positionOnGrid);
 
           data.x = positionOnGrid.x;
           data.y = positionOnGrid.y;
@@ -53,11 +74,21 @@ export function Workspace({}: Props) {
         onDragLeave={(_event, _data, ghost) => document.body.append(ghost!)}
         onDrop={(e, data: any) => {
           Lumber.log("EVENT", `COMPONENT DROPPED AT X:${data.x};Y:${data.y}`);
-          setComponents([...components, { ...data } as any]);
+          ComponentStore.trigger.setComponent({
+            id: Date.now() + "",
+            pos: { ...data },
+          });
         }}
       >
-        <Gate x={0} y={0}></Gate>
-        {...components.map((pos) => <Gate {...pos}></Gate>)}
+        {...components.map(([id, pos]) => (
+          <Gate
+            key={id}
+            {...pos}
+            onPosUpdate={(pos) =>
+              ComponentStore.trigger.setComponent({ id, pos })}
+          >
+          </Gate>
+        ))}
       </DropTarget>
     </GridSurface>
   );
@@ -95,6 +126,6 @@ function snapGhostIntoGrid(
 ) {
   if (ghost.parentElement != grid) grid.append(ghost);
   const em = +getComputedStyle(grid).fontSize.slice(0, -2);
-  ghost.setAttribute("data-pos-x", (position.x * em + offset.x) + "");
-  ghost.setAttribute("data-pos-y", (position.y * em + offset.y) + "");
+  ghost.setAttribute("data-pos-x", (position.x * em) + "");
+  ghost.setAttribute("data-pos-y", (position.y * em) + "");
 }
