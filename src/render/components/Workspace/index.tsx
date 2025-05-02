@@ -63,7 +63,7 @@ export function Workspace({}: Props) {
         onDragLeave={(_event, _data, ghost) => document.body.append(ghost!)}
         onDrop={(e, data: any) => {
           Lumber.log("EVENT", `COMPONENT DROPPED AT X:${data.x};Y:${data.y}`);
-          setComponents([...components, data as any]);
+          setComponents([...components, {...data} as any]);
         }}
       >
         <GridDraggable
