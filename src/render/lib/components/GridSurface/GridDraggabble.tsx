@@ -1,16 +1,17 @@
 import { h } from "preact";
 import {
-  memo,
-  PropsWithChildren,
   useCallback,
+  useContext,
   useEffect,
-  useMemo,
   useRef,
   useState,
-} from "preact/compat";
+} from "preact/hooks";
 import style from "./GirdSurface.module.css";
-import { createAtom } from "@xstate/store";
 import { Lumber } from "@/lib/log/Lumber";
+import { useControlledState } from "@/lib/components/hooks";
+import { Point } from "@/lib/types/Geometry";
+import { OffsetContext } from "@/lib/components/GridSurface";
+import { memo, PropsWithChildren } from "preact/compat";
 
 type Props = {
   width: number;
@@ -21,61 +22,65 @@ type Props = {
 };
 
 export const GridDraggable = memo((
-  { width, height, children, onPosUpdate, ...props }: PropsWithChildren<Props>,
+  {
+    width,
+    height,
+    children,
+    ...props
+  }: PropsWithChildren<Props>,
 ) => {
-  Lumber.log(Lumber.RENDER, "GRID DRAGGABLE RENDER");
+  const offset = useContext(OffsetContext).get();
 
-  const pos = useMemo(
-    () => {
-      return createAtom({
-        x: props.x,
-        y: props.y,
-      });
-    },
+  //this lets the component update its own position
+  //position changes from the parent will still cause updates
+  const [pos, setPos] = useControlledState(
+    (x, y) => ({ x, y }),
     [props.x, props.y],
+    props.onPosUpdate,
   );
-  const { x, y } = pos.get();
+  const [grabOffset, setGrabOffset] = useState<Point>();
 
-  const [attached, setAttached] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    Lumber.log(Lumber.HOOK, "EFFECT - GridDraggable pos");
-    const { unsubscribe } = pos.subscribe(({ x, y }) => {
-      if (!ref.current) return;
-      ref.current.setAttribute("data-pos-x", Math.round(x) + "");
-      ref.current.setAttribute("data-pos-y", Math.round(y) + "");
-      onPosUpdate?.({ x, y });
-    });
-    return unsubscribe;
-  }, [pos]);
+  Lumber.log(Lumber.RENDER, "GRID DRAGGABLE RENDER", ref);
 
   const movehandler = useCallback((ev: MouseEvent) => {
     if (!ref.current) return;
+    if (!grabOffset) return;
     const em = +getComputedStyle(ref.current).fontSize.slice(0, -2);
+    const boundingBox = ref.current.parentElement!.getBoundingClientRect();
 
-    const x = pos.get().x + (ev.movementX / em);
-    const y = pos.get().y + (ev.movementY / em);
+    const pos = {
+      x: Math.round(
+        (ev.clientX - boundingBox.x - offset.x - grabOffset.x) / em,
+      ),
+      y: Math.round(
+        (ev.clientY - boundingBox.y - offset.y - grabOffset.y) / em,
+      ),
+    };
 
-    pos.set({ x, y });
-  }, [pos]);
+    //Keeping the old pos object if x and y didnt change prevents unneccessary rerenders
+    setPos((oldPos) => {
+      if (oldPos.x == pos.x && oldPos.y == pos.y) return oldPos;
+      return pos;
+    });
+  }, [grabOffset]);
 
   useEffect(() => {
     Lumber.log(Lumber.HOOK, "EFFECT - GridDraggable move");
-    if (!attached) return;
+    if (!grabOffset) return;
 
     window.addEventListener("mousemove", movehandler);
     window.addEventListener("mouseup", () => {
       document.body.style.cursor = "";
       window.removeEventListener("mousemove", movehandler);
-      setAttached(false);
+      setGrabOffset(undefined);
     }, {
       once: true,
     });
     document.body.style.cursor = "grabbing"; //! todo overwrite other cursors
 
     return () => window.removeEventListener("mousemove", movehandler);
-  }, [attached, pos]);
+  }, [grabOffset]);
 
   return (
     <div
@@ -84,11 +89,16 @@ export const GridDraggable = memo((
       style-grid-draggable=""
       data-scale-w={Math.round(width)}
       data-scale-h={Math.round(height)}
-      data-pos-x={Math.round(x)}
-      data-pos-y={Math.round(y)}
+      data-pos-x={Math.round(pos.x)}
+      data-pos-y={Math.round(pos.y)}
       onMouseDown={(event) => {
         event.stopPropagation();
-        setAttached(true);
+        const boundingBox = event.currentTarget.getBoundingClientRect();
+        const grabOffset = {
+          x: event.clientX - boundingBox.x,
+          y: event.clientY - boundingBox.y,
+        };
+        setGrabOffset(grabOffset);
       }}
     >
       {children}
