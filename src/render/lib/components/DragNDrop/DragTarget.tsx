@@ -31,7 +31,7 @@ const createGhostElement = (
   ev: TargetedEvent<HTMLDivElement, DragEvent>,
   ghostElement: AnyComponent,
 ) => {
-  const id = Date.now();
+  const id = Math.random();
   //hides the native ghost image
   ev.dataTransfer?.setData(`ghost-${id}`, "");
   ev.dataTransfer?.setDragImage(document.head, 0, 0);
@@ -81,7 +81,7 @@ export const DragTarget = memo(
   ({ group, data, onDragStart, ghostElement, ...attr }: Props) => {
     Lumber.log(Lumber.RENDER, "DRAG TARGET RENDER");
 
-    const id = Date.now();
+    const id = Math.random();
     useEffect(() => {
       DragStore.trigger.setData({ id, data });
       return () => DragStore.trigger.removeData({ id });
