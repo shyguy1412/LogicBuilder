@@ -49,6 +49,10 @@ const getGhostFromEvent = (
   return DragStore.get().context.ghostElements.get(id);
 };
 
+export namespace DropTarget {
+  export type Props = Parameters<typeof DropTarget>[0];
+}
+
 export const DropTarget = memo((
   { accept, onDragEnter, onDragOver, onDrop, onDragLeave, ...attr }: Props,
 ) => {
