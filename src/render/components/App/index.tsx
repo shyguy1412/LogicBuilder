@@ -5,10 +5,10 @@ import { Statusbar } from "@/components/Statusbar";
 import { createRouter, useRouter } from "@/lib/Router";
 import { Titlebar } from "@/lib/components/Titlebar";
 import { PiCircuitry, PiCpu, PiFile, PiGear } from "react-icons/pi";
-import { useCallback } from "preact/hooks";
 import { Lumber } from "@/lib/log/Lumber";
 import { Workspace } from "@/components/Workspace";
 import { ComponentList } from "@/components/ComponentList";
+import { useConstant } from "@/lib/components/hooks";
 
 export const Router = createRouter({
   workspace: () => <Workspace />,
@@ -53,10 +53,10 @@ export function App() {
   return (
     <div class={style.app}>
       <Titlebar
-        minimize={useCallback(() => titlebar.minimize(), [])}
-        maximize={useCallback(() => titlebar.maximize(), [])}
+        minimize={useConstant(() => titlebar.minimize())}
+        maximize={useConstant(() => titlebar.maximize())}
         // close={() => titlebar.close}
-        close={useCallback(() => {}, [])}
+        close={useConstant(() => {})}
         title="Logic Builder"
         icon={PiCpu}
       />
