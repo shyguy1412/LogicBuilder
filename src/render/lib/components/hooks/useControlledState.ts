@@ -1,6 +1,12 @@
 import { Atom, createAtom } from "@xstate/store";
 import { useSelector } from "@xstate/store/react";
-import { Dispatch, StateUpdater, useCallback, useMemo } from "preact/hooks";
+import {
+  Dispatch,
+  StateUpdater,
+  useCallback,
+  useEffect,
+  useMemo,
+} from "preact/hooks";
 
 /**
  * Controlled state is state that can be controlled by other values
@@ -29,7 +35,7 @@ export function useControlledState<S, D extends any[]>(
       : newState;
     updateEvent?.(computedState);
     atom.set(computedState);
-  }, [atom]);
+  }, [atom, updateEvent]);
 
   return [
     useSelector(atom, (atom) => atom),
