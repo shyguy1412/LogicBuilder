@@ -56,7 +56,7 @@ export const Gate = memo(({
   const [{ x, y }, setPos] = useControlledState(
     (x, y) => ({ x: x ?? 0, y: y ?? 0 }),
     [props.x, props.y],
-    onDrag,
+    onDragStop,
   );
 
   const symbol = useMemo(
@@ -71,8 +71,8 @@ export const Gate = memo(({
       x={x ?? 0}
       y={y ?? 0}
       onDragStart={onDragStart}
-      onDrag={setPos}
-      onDragStop={onDragStop}
+      onDrag={onDrag}
+      onDragStop={setPos}
     >
       <div class={style.gate}>
         {symbol}
