@@ -11,7 +11,7 @@ import { Lumber } from "@/lib/log/Lumber";
 import { useControlledState } from "@/lib/components/hooks";
 import { Point } from "@/lib/types/Geometry";
 import { OffsetContext } from "@/lib/components/GridSurface";
-import { memo, PropsWithChildren } from "preact/compat";
+import { HTMLAttributes, memo, PropsWithChildren } from "preact/compat";
 
 type Props = {
   width: number;
@@ -22,6 +22,9 @@ type Props = {
   onDrag?: (pos: Point) => void;
   onDragStop?: (pos: Point) => void;
 };
+type PropsWithAttributes =
+  & Props
+  & Omit<HTMLAttributes<HTMLDivElement>, keyof Props>;
 
 export namespace GridDraggable {
   export type Props = Parameters<typeof GridDraggable>[0];
@@ -31,21 +34,23 @@ export const GridDraggable = memo((
   {
     width,
     height,
+    x,
+    y,
     children,
     onDragStart,
     onDrag,
     onDragStop,
     ...props
-  }: PropsWithChildren<Props>,
+  }: PropsWithChildren<PropsWithAttributes>,
 ) => {
   Lumber.log(Lumber.RENDER, "GRID DRAGGABLE RENDER");
   const offsetAtom = useContext(OffsetContext);
 
   //this lets the component update its own position
   //position changes from the parent will still cause updates
-  const [{ x, y }, setPos, posAtom] = useControlledState(
+  const [pos, setPos, posAtom] = useControlledState(
     (x, y) => ({ x, y }),
-    [props.x, props.y],
+    [x, y],
     onDrag,
   );
   const [grabOffset, setGrabOffset] = useState<Point>();
@@ -73,7 +78,7 @@ export const GridDraggable = memo((
     //   if (oldPos.x == pos.x && oldPos.y == pos.y) return oldPos;
     //   return pos;
     // });
-    setPos(pos);
+    // setPos(pos);
   }, [grabOffset, offsetAtom]);
 
   useEffect(() => {
@@ -98,12 +103,13 @@ export const GridDraggable = memo((
   return (
     <div
       ref={ref}
-      class={style.griddraggable}
+      {...props}
+      class={style.griddraggable + " " + (props.className ?? props.class ?? "")}
       style-grid-draggable=""
       data-scale-w={Math.round(width)}
       data-scale-h={Math.round(height)}
-      data-pos-x={Math.round(x)}
-      data-pos-y={Math.round(y)}
+      data-pos-x={Math.round(pos.x)}
+      data-pos-y={Math.round(pos.y)}
       onMouseDown={(event) => {
         event.stopPropagation();
         const boundingBox = event.currentTarget.getBoundingClientRect();
@@ -112,7 +118,7 @@ export const GridDraggable = memo((
           y: event.clientY - boundingBox.y,
         };
         setGrabOffset(grabOffset);
-        onDragStart?.(props);
+        onDragStart?.({ ...pos });
       }}
     >
       {children}
