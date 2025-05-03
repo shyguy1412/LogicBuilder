@@ -26,11 +26,12 @@
 }
 
 .inputs {
-  height: 100%;
   position: absolute;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
+  height: calc(100% + var(--border-width) * 2);
+  top: calc(var(--border-width) * -1);
   transform: translateX(calc(-50% - var(--border-width) / 2));
 }
 
