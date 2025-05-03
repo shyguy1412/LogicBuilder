@@ -4,7 +4,7 @@
   z-index: 0;
 }
 
-.workspace [style-grid-draggable]:not(:has(> [style-wire])) {
+.workspace :not([style-wire]) {
   z-index: 1;
 }
 

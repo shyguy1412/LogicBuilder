@@ -153,13 +153,75 @@ export function Workspace({}: Props) {
           >
           </Gate>
         )).toArray()}
+        {
+          /* <Wire
+          from={{x: 3, y: 5 }}
+          to={{x: 8, y: 8 }}
+        /> */
+        }
         <Wire
-          from={{ x: 3, y: 5 }}
-          to={{ x: 8, y: 8 }}
+          from={{ x: 9, y: 9 }}
+          to={{ x: 7, y: 7 }}
         />
         <Wire
-          from={{ x: 8, y: 8 }}
-          to={{ x: 8, y: 5 }}
+          from={{ x: 9, y: 9 }}
+          to={{ x: 8, y: 7 }}
+        />
+        <Wire
+          from={{ x: 9, y: 9 }}
+          to={{ x: 9, y: 7 }}
+        />
+        <Wire
+          from={{ x: 9, y: 9 }}
+          to={{ x: 10, y: 7 }}
+        />
+        <Wire
+          from={{ x: 9, y: 9 }}
+          to={{ x: 11, y: 7 }}
+        />
+        <Wire
+          from={{ x: 9, y: 9 }}
+          to={{ x: 11, y: 8 }}
+        />
+        <Wire
+          from={{ x: 9, y: 9 }}
+          to={{ x: 11, y: 9 }}
+        />
+        <Wire
+          from={{ x: 9, y: 9 }}
+          to={{ x: 11, y: 10 }}
+        />
+        <Wire
+          from={{ x: 9, y: 9 }}
+          to={{ x: 11, y: 11 }}
+        />
+        <Wire
+          from={{ x: 9, y: 9 }}
+          to={{ x: 10, y: 11 }}
+        />
+        <Wire
+          from={{ x: 9, y: 9 }}
+          to={{ x: 9, y: 11 }}
+        />
+        <Wire
+          from={{ x: 9, y: 9 }}
+          to={{ x: 8, y: 11 }}
+        />
+        <Wire
+          from={{ x: 9, y: 9 }}
+          to={{ x: 7, y: 11 }}
+        />
+        <Wire
+          from={{ x: 9, y: 9 }}
+          to={{ x: 7, y: 10 }}
+        />
+        <Wire
+          from={{ x: 9, y: 9 }}
+          to={{ x: 7, y: 9 }}
+        />
+        <Wire
+          from={{ x: 9, y: 9 }}
+          to={{ x: 7, y: 8 }}
         />
       </GridSurface>
     </DropTarget>

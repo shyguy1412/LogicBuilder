@@ -1,12 +1,22 @@
 .wire {
+  content: "";
+  display: block;
   --thickness: 0.1em;
-  width: attr(data-length em);
+  width: calc(attr(data-wire-length em) + var(--thickness));
   height: var(--thickness);
   background-color: var(--clr-foreground-a0);
-  transform: translate(-50%, -50%) rotate(attr(data-angle rad)) translate(50%);
-  position: relative;
+  transform: translate(-50%, -50%) rotate(attr(data-wire-angle rad))
+    translate(calc(50% + var(--thickness) * -0.5));
+  border-radius: var(--thickness);
+  z-index: 999;
 }
 
-* :focus {
-  outline: 1px solid green;
+.handle {
+  background-color: #ff000088;
+  transform: translate(-50%, -50%) scale(50%);
+  cursor: pointer;
+}
+
+[style-wire-to] {
+  background-color: #00ff0088;
 }
