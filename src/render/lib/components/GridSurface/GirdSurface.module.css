@@ -22,7 +22,6 @@
     calc(var(--dot-spacing) * 0.5 + var(--offset-y));
   position: relative;
   overflow: hidden;
-  cursor: move;
 }
 
 .griddraggable {
