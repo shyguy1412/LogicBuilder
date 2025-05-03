@@ -7,7 +7,7 @@ import { HTMLAttributes, memo, TargetedEvent, useEffect } from "preact/compat";
 type Props = {
   group: string;
   data: any;
-  ghostElement?: AnyComponent;
+  ghostElement?: AnyComponent | "native";
 } & HTMLAttributes<HTMLDivElement>;
 
 export const DragStore = createStore({
@@ -29,12 +29,17 @@ export const DragStore = createStore({
 
 const createGhostElement = (
   ev: TargetedEvent<HTMLDivElement, DragEvent>,
-  ghostElement: AnyComponent,
+  ghostElement?: AnyComponent | string,
 ) => {
-  const id = Math.random();
+  if (typeof ghostElement == "string") return;
+
   //hides the native ghost image
-  ev.dataTransfer?.setData(`ghost-${id}`, "");
   ev.dataTransfer?.setDragImage(document.head, 0, 0);
+  
+  if(!ghostElement) return;
+
+  const id = Math.random();
+  ev.dataTransfer?.setData(`ghost-${id}`, "");
 
   const ghostImageElement = document.createElement("div");
   ghostImageElement.className = style.ghostimage;
@@ -95,7 +100,7 @@ export const DragTarget = memo(
         onDragStart={(e) => {
           e.dataTransfer?.setData(group, e.currentTarget.id);
           e.dataTransfer?.setData("data-" + id, "");
-          if (ghostElement) createGhostElement(e, ghostElement);
+          createGhostElement(e, ghostElement);
           onDragStart?.(e);
         }}
         {...attr}
