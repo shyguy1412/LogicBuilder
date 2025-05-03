@@ -56,7 +56,7 @@ export namespace DropTarget {
 export const DropTarget = memo((
   { accept, onDragEnter, onDragOver, onDrop, onDragLeave, ...attr }: Props,
 ) => {
-  Lumber.log(Lumber.RENDER, "RENDER DROP TARGET");
+  Lumber.log(Lumber.RENDER, "DROP TARGET RENDER");
 
   const shouldAccept = useCallback((types?: readonly string[]) => {
     if (!types) return false;

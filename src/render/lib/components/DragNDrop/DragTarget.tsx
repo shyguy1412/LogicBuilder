@@ -76,7 +76,7 @@ const createGhostElement = (
 
 export const DragTarget = memo(
   ({ group, data, onDragStart, ghostElement, ...attr }: Props) => {
-    Lumber.log(Lumber.RENDER, "RENDER DRAG TARGET");
+    Lumber.log(Lumber.RENDER, "DRAG TARGET RENDER");
 
     const id = Date.now();
     useEffect(() => {
