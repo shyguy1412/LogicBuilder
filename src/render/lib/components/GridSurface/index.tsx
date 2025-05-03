@@ -1,6 +1,6 @@
 import style from "./GirdSurface.module.css";
 
-import { PropsWithChildren } from "preact/compat";
+import { memo, PropsWithChildren, TargetedEvent } from "preact/compat";
 import { useCallback, useRef } from "preact/hooks";
 import { createContext, h } from "preact";
 
@@ -27,7 +27,7 @@ export namespace GridSurface {
   export type Props = Parameters<typeof GridSurface>[0];
 }
 
-export function GridSurface(
+export const GridSurface = memo((
   {
     children,
     minZoom,
@@ -35,7 +35,7 @@ export function GridSurface(
     zoomSpeed,
     ...props
   }: PropsWithChildren<Props>,
-) {
+) => {
   Lumber.log(Lumber.RENDER, "GRID SURFACE RENDER");
 
   const [offset, setOffset, offsetAtom] = useControlledState(
@@ -52,19 +52,69 @@ export function GridSurface(
 
   const ref = useRef<HTMLDivElement>(null);
 
-  const move = useCallback(
-    (
-      startPos: Point,
-      startMouse: Point,
-    ) =>
-    (ev: MouseEvent) => {
-      if (!ref.current) return;
+  const onWheel = useCallback(
+    (event: TargetedEvent<HTMLDivElement, WheelEvent>) => {
+      const { currentTarget, deltaY, clientX, clientY } = event;
 
-      const x = startPos.x - (startMouse.x - ev.clientX);
-      const y = startPos.y - (startMouse.y - ev.clientY);
-      setOffset({ x, y });
+      //zoom factor describes how far each point should move away from origin
+      //when zoomed
+      //zoom factor of 2 means evey point moves twice as far away
+      //this makes the percieved zoom constant
+      const targetZoomFactor = Math.sign(deltaY) * (zoomSpeed ?? 0.1);
+
+      const newZoom = Math.min(
+        maxZoom ?? 10,
+        Math.max(minZoom ?? 0, zoom - (targetZoomFactor * zoom)),
+      );
+      if (newZoom == zoom) return;
+
+      const zoomFactor = 1 - (newZoom / zoom);
+
+      const boundingBox = currentTarget.getBoundingClientRect();
+
+      const moveAmount = {
+        x: zoomFactor * (clientX - boundingBox.x - offset.x),
+        y: zoomFactor * (clientY - boundingBox.y - offset.y),
+      };
+
+      const zoomOffset = {
+        x: offset.x + moveAmount.x,
+        y: offset.y + moveAmount.y,
+      };
+
+      setOffset(zoomOffset);
+      setZoom(newZoom);
     },
-    [setOffset],
+    [zoom, offset, setOffset, setZoom],
+  );
+
+  const onMouseDown = useCallback(
+    (event: TargetedEvent<HTMLDivElement, MouseEvent>) => {
+      event.stopPropagation();
+      const controller = new AbortController();
+      const { signal } = controller;
+
+      const startPos = offset;
+      const startMouse = {
+        x: event.clientX,
+        y: event.clientY,
+      };
+      window.addEventListener("mousemove", (event) => {
+        if (!ref.current) return;
+
+        const x = startPos.x - (startMouse.x - event.clientX);
+        const y = startPos.y - (startMouse.y - event.clientY);
+        setOffset({ x, y });
+      }, { signal });
+
+      window.addEventListener("mouseup", () => {
+        document.body.style.cursor = "";
+        controller.abort();
+      }, { once: true });
+
+      document.body.style.cursor = "move";
+    },
+    [offset, setOffset],
   );
 
   return (
@@ -77,59 +127,14 @@ export function GridSurface(
       data-offset-x={offset.x}
       data-offset-y={offset.y}
       class={style.surface}
-      onWheel={(event) => {
-        const { currentTarget, deltaY, clientX, clientY } = event;
-
-        //zoom factor describes how far each point should move away from origin
-        //when zoomed
-        //zoom factor of 2 means evey point moves twice as far away
-        //this makes the percieved zoom constant
-        const targetZoomFactor = Math.sign(deltaY) * (zoomSpeed ?? 0.1);
-
-        const newZoom = Math.min(
-          maxZoom ?? 10,
-          Math.max(minZoom ?? 0, zoom - (targetZoomFactor * zoom)),
-        );
-        if (newZoom == zoom) return;
-
-        const zoomFactor = 1 - (newZoom / zoom);
-
-        const boundingBox = currentTarget.getBoundingClientRect();
-
-        const moveAmount = {
-          x: zoomFactor * (clientX - boundingBox.x - offset.x),
-          y: zoomFactor * (clientY - boundingBox.y - offset.y),
-        };
-
-        const zoomOffset = {
-          x: offset.x + moveAmount.x,
-          y: offset.y + moveAmount.y,
-        };
-
-        setOffset(zoomOffset);
-        setZoom(newZoom);
-      }}
-      onMouseDown={(event) => {
-        event.stopPropagation();
-        const movehandler = move(offset, {
-          x: event.clientX,
-          y: event.clientY,
-        });
-        window.addEventListener("mousemove", movehandler);
-        window.addEventListener("mouseup", () => {
-          document.body.style.cursor = "";
-          window.removeEventListener("mousemove", movehandler);
-        }, {
-          once: true,
-        });
-        document.body.style.cursor = "move";
-      }}
+      onWheel={onWheel}
+      onMouseDown={onMouseDown}
     >
       <OffsetContext.Provider value={offsetAtom}>
         {children}
       </OffsetContext.Provider>
     </div>
   );
-}
+});
 
 export { GridDraggable } from "./GridDraggabble";
