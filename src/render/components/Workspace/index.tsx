@@ -77,13 +77,13 @@ export function Workspace({}: Props) {
 
       const positionOnGrid = calculatePositionOnGrid(
         ghost,
-        ev.currentTarget,
+        ev.currentTarget.firstElementChild!,
         offset,
       );
 
       snapGhostIntoGrid(
         ghost,
-        ev.currentTarget,
+        ev.currentTarget.firstElementChild!,
         offset,
         positionOnGrid,
       );
@@ -120,21 +120,21 @@ export function Workspace({}: Props) {
   );
 
   return (
-    <GridSurface
-      zoom={zoom}
-      minZoom={0.35}
-      maxZoom={600}
-      zoomSpeed={0.06}
-      offsetX={offset.x}
-      offsetY={offset.y}
-      onOffsetUpdate={(o) => offsetStore.set(o)}
+    <DropTarget
+      class={style.workspace}
+      accept={DROP_GROUPS.CIRCUIT_COMPONENT}
+      onDragOver={onDragOver}
+      onDragLeave={onDragLeave}
+      onDrop={onDrop}
     >
-      <DropTarget
-        class={style.workspace}
-        accept={DROP_GROUPS.CIRCUIT_COMPONENT}
-        onDragOver={onDragOver}
-        onDragLeave={onDragLeave}
-        onDrop={onDrop}
+      <GridSurface
+        zoom={zoom}
+        minZoom={0.35}
+        maxZoom={600}
+        zoomSpeed={0.06}
+        offsetX={offset.x}
+        offsetY={offset.y}
+        onOffsetUpdate={(o) => offsetStore.set(o)}
       >
         {...components.map(({ id, pos, op }) => (
           <Gate
@@ -150,14 +150,14 @@ export function Workspace({}: Props) {
           >
           </Gate>
         ))}
-      </DropTarget>
-    </GridSurface>
+      </GridSurface>
+    </DropTarget>
   );
 }
 
 function calculatePositionOnGrid(
   ghost: HTMLDivElement,
-  grid: HTMLDivElement,
+  grid: Element,
   offset: Point,
 ) {
   const ghostRect = ghost.getBoundingClientRect();
@@ -181,7 +181,7 @@ function calculatePositionOnGrid(
 
 function snapGhostIntoGrid(
   ghost: HTMLDivElement,
-  grid: HTMLDivElement,
+  grid: Element,
   offset: Point,
   position: Point,
 ) {

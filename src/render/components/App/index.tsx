@@ -16,34 +16,29 @@ export const Router = createRouter({
 }, "workspace");
 
 const Menus: Menu[][] = [
-  [{
-    icon: PiFile,
-    name: "explorer",
-    menu: () => (
-      <ComponentList></ComponentList>
-      // <div onClick={() => Router.trigger.setRoute({ route: "workspace" })}>
-      //   Explorer
-      // </div>
-    ),
-  }, {
-    icon: PiCircuitry,
-    name: "circuits",
-    menu: () => (
-      <div>circuits</div>
-      // <div onClick={() => Router.trigger.setRoute({ route: "other" })}>
-      //   circuits
-      // </div>
-    ),
-  }],
-  [{
-    icon: PiGear,
-    name: "settings",
-    menu: () => <div>Settings</div>,
-  }],
+  [
+    {
+      icon: PiCircuitry,
+      name: "circuits",
+      menu: () => <ComponentList></ComponentList>,
+    },
+    {
+      icon: PiFile,
+      name: "explorer",
+      menu: () => <div>explorer</div>,
+    },
+  ],
+  [
+    {
+      icon: PiGear,
+      name: "settings",
+      menu: () => <div>Settings</div>,
+    },
+  ],
 ];
 
-// Lumber.blockChannel(Lumber.RENDER);
-// Lumber.blockChannel(Lumber.HOOK);
+Lumber.blockChannel(Lumber.RENDER);
+Lumber.blockChannel(Lumber.HOOK);
 
 export function App() {
   const { View } = useRouter(Router);
