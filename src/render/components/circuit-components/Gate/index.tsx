@@ -65,18 +65,20 @@ export const Gate = memo(({
   );
 
   return (
-    <GridDraggable
-      width={3}
-      height={4}
-      x={x ?? 0}
-      y={y ?? 0}
-      onDragStart={onDragStart}
-      onDrag={onDrag}
-      onDragStop={setPos}
-    >
-      <div class={style.gate}>
-        {symbol}
-      </div>
-    </GridDraggable>
+    <Lumber.Supress channel={Lumber.RENDER}>
+      <GridDraggable
+        width={3}
+        height={4}
+        x={x ?? 0}
+        y={y ?? 0}
+        onDragStart={onDragStart}
+        onDrag={onDrag}
+        onDragStop={setPos}
+      >
+        <div class={style.gate}>
+          {symbol}
+        </div>
+      </GridDraggable>
+    </Lumber.Supress>
   );
 });

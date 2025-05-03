@@ -1,4 +1,12 @@
+import { useConstant } from "@/lib/components/hooks";
 import { createStore } from "@xstate/store";
+import { createContext, Fragment, h } from "preact";
+import {
+  PropsWithChildren,
+  useContext,
+  useEffect,
+  useMemo,
+} from "preact/compat";
 
 export type LumberChannel = {
   name: string;
@@ -26,11 +34,18 @@ export const CommonChannels = {
 } as const;
 export type CommonChannels = typeof CommonChannels[keyof typeof CommonChannels];
 
+type Channel = {
+  level: number;
+  name: string;
+  blocked: boolean;
+};
+
+type ChannelInfo = Omit<Channel, "name">;
 const store = createStore({
   context: {
     level: 0,
     filter: /.*/,
-    channels: {} as { [key: string]: number },
+    channels: {} as { [key in Channel["name"]]: ChannelInfo },
   },
   on: {
     setFilter: (context, { filter }: { filter: RegExp }) => ({
@@ -41,33 +56,73 @@ const store = createStore({
       ...context,
       level,
     }),
-    setChannel: (context, event: { level: number; channel: string }) => ({
+    setDepth: (context, { depth }: { depth: number }) => ({
+      ...context,
+      depth,
+    }),
+    setChannel: (
+      context,
+      { channel, level, blocked }: Partial<ChannelInfo> & { channel: string },
+    ) => ({
       ...context,
       channels: {
         ...context.channels,
-        [event.channel]: event.level,
+        [channel]: {
+          level: level ?? context.channels[channel]?.level ?? 0,
+          blocked: blocked ?? context.channels[channel]?.blocked ?? false,
+        },
       },
     }),
   },
 });
 
+const SupressContext = createContext<string[]>([]);
+
+type Props = { channel: string | string[] };
+const Supress = ({ channel, children }: PropsWithChildren<Props>) => {
+  const channels = typeof channel == "object"
+    ? channel
+    : useMemo(() => [channel], []);
+
+  const element = h(SupressContext.Provider, { value: channels }, children);
+
+  return element;
+};
+
 export const Lumber = {
   createChannel: (channel: string, level: number) =>
     store.trigger.setChannel({ channel, level }),
-  blockChannel: (channel: string) =>
-    store.trigger.setChannel({ channel, level: -1 }),
-  setLevel: (level: number) => store.trigger.setLevel({ level }),
-  setFilter: (filter: RegExp) => store.trigger.setFilter({ filter }),
-  getLogger: (channel: string) => Lumber.log.bind(Lumber, channel),
-  log: (channel: string, ...messages: any[]) => {
-    const { context: { filter, channels, level } } = store.get();
-    const channelLevel = channels[channel] ?? 0;
 
-    if (channelLevel < 0 || channelLevel < level) return;
+  blockChannel: (channel: string) =>
+    store.trigger.setChannel({ channel, blocked: true }),
+
+  unblockChannel: (channel: string) =>
+    store.trigger.setChannel({ channel, blocked: false }),
+
+  setLevel: (level: number) => store.trigger.setLevel({ level }),
+
+  setFilter: (filter: RegExp) => store.trigger.setFilter({ filter }),
+
+  getLogger: (channel: string) => Lumber.log.bind(Lumber, channel),
+
+  log: (channel: string, ...messages: any[]) => {
+    try {
+      const supressedChannels = useContext(SupressContext);
+      if (supressedChannels.includes(channel)) return;
+    } catch {}
+    const { context: { filter, channels, level } } = store.get();
+    const channelLevel = channels[channel]?.level ?? 0;
+    const blocked = channels[channel]?.blocked ?? false;
+
+    if (blocked) return;
+    if (channelLevel < level) return;
     if (!filter.test(channel)) return;
 
     console.log(...messages);
   },
+
+  Supress,
+
   ...CommonChannels,
   ...CommonLevels,
 } as const;
