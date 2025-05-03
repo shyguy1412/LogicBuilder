@@ -1,0 +1,12 @@
+.wire {
+  --thickness: 0.1em;
+  width: attr(data-length em);
+  height: var(--thickness);
+  background-color: var(--clr-foreground-a0);
+  transform: translate(-50%, -50%) rotate(attr(data-angle rad)) translate(50%);
+  position: relative;
+}
+
+* :focus {
+  outline: 1px solid green;
+}

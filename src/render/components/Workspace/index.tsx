@@ -10,6 +10,7 @@ import { Gate, LogicOperation } from "@/components/circuit-components/Gate";
 import { Point } from "@/lib/types/Geometry";
 import { useSelector } from "@xstate/store/react";
 import { useConstant } from "@/lib/components/hooks";
+import { Wire } from "@/components/circuit-components/Wire";
 
 type Props = {};
 
@@ -65,7 +66,7 @@ export function Workspace({}: Props) {
   const offsetStore = useMemo(() => createAtom({ x: 0, y: 0 }), []);
   const offset = offsetStore.get();
 
-  const [zoom, setZoom] = useState(1);
+  const [zoom, setZoom] = useState(5);
 
   const components = useSelector(
     ComponentStore,
@@ -152,6 +153,14 @@ export function Workspace({}: Props) {
           >
           </Gate>
         )).toArray()}
+        <Wire
+          from={{ x: 3, y: 5 }}
+          to={{ x: 8, y: 8 }}
+        />
+        <Wire
+          from={{ x: 8, y: 8 }}
+          to={{ x: 8, y: 5 }}
+        />
       </GridSurface>
     </DropTarget>
   );

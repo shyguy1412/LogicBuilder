@@ -1,6 +1,11 @@
 .workspace[style-drop-target] {
   width: 100%;
   height: 100%;
+  z-index: 0;
+}
+
+.workspace [style-grid-draggable]:not(:has(> [style-wire])) {
+  z-index: 1;
 }
 
 [style-grid-surface] {
