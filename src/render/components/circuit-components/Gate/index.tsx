@@ -62,7 +62,6 @@ export const Gate = memo(({
   );
 
   return (
-    // <DragTarget group="a" data={{}}>
     <GridDraggable
       width={3}
       height={4}
@@ -72,12 +71,9 @@ export const Gate = memo(({
       onDrag={setPos}
       onDragStop={onDragStop}
     >
-      <div
-        class={style.gate}
-      >
+      <div class={style.gate}>
         {symbol}
       </div>
     </GridDraggable>
-    // </DragTarget>
   );
 });

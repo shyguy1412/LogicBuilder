@@ -19,7 +19,7 @@ export function createRouter<R extends RouteTable>(
   const store = createStore({
     context: { route: initial, view: routeTable[initial]! },
     on: {
-      setRoute: (_, event: { route: keyof R; }) => ({
+      setRoute: (_, event: { route: keyof R }) => ({
         route: event.route,
         view: routeTable[event.route] ?? None,
       }),
