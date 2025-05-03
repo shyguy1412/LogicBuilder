@@ -1,0 +1,9 @@
+.list {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  width: fit-content;
+  margin: auto;
+  gap: 1rem;
+  margin-top: 1rem;
+}

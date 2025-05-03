@@ -28,33 +28,35 @@ const createGateComponent = (x: number, y: number, op: LogicOperation) => ({
   type: "gate",
   op,
   pos: { x, y },
-  id: Date(),
+  id: new Date(Math.random() * 100_000_000_000_000).toISOString(),
 } satisfies IGateComponent);
 
 const ComponentStore = createStore({
   context: {
-    components: [createGateComponent(0, 0, "and")] as IGateComponent[],
+    components: new Map() as Map<string, IGateComponent>,
   },
   on: {
     addComponent: (context, event: { component: IGateComponent }) => ({
-      components: [...context.components, event.component],
+      components: new Map(context.components).set(
+        event.component.id,
+        event.component,
+      ),
     }),
     moveComponent: (context, event: { id: string; pos: Point }) => {
-      const componentIndex = context.components.findIndex((el) =>
-        el.id == event.id
-      );
-      if (componentIndex < 0) throw new Error("Invalid ID");
-      const component = context.components[componentIndex]!;
+      const component = context.components.get(event.id);
+      if (!component) throw new Error("invalid component");
 
       component.pos = event.pos;
+
       return {
-        components: [
-          ...context.components.filter((c) => c.id != event.id),
-          component,
-        ],
+        components: new Map(context.components),
       };
     },
   },
+});
+
+ComponentStore.trigger.addComponent({
+  component: createGateComponent(0, 0, "and"),
 });
 
 export function Workspace({}: Props) {
@@ -68,7 +70,7 @@ export function Workspace({}: Props) {
   const components = useSelector(
     ComponentStore,
     ({ context }) => context.components,
-  );
+  ).values();
 
   const onDragOver = useCallback(
     ((ev, data, ghost) => {
@@ -101,18 +103,16 @@ export function Workspace({}: Props) {
     }) satisfies DropTarget.Props["onDragLeave"],
     [],
   );
+
   const onDrop = useCallback(
     ((e, data: any) => {
-      Lumber.log("EVENT", `COMPONENT DROPPED AT X:${data.x};Y:${data.y}`);
-      const randomOp = Object.values(
-        LogicOperation,
-      )[Date.now() % Object.keys(LogicOperation).length]!;
+      // Lumber.log("EVENT", `COMPONENT DROPPED AT X:${data.x};Y:${data.y}`, data);
 
       ComponentStore.trigger.addComponent({
         component: createGateComponent(
           data.x,
           data.y,
-          randomOp,
+          data.op,
         ),
       });
     }) satisfies DropTarget.Props["onDrop"],
@@ -130,7 +130,7 @@ export function Workspace({}: Props) {
       <GridSurface
         zoom={zoom}
         minZoom={0.35}
-        maxZoom={600}
+        maxZoom={450}
         zoomSpeed={0.06}
         offsetX={offset.x}
         offsetY={offset.y}
@@ -141,15 +141,15 @@ export function Workspace({}: Props) {
             key={id}
             {...pos}
             op={op}
-            onDragStart={useConstant(
-              (pos) => ComponentStore.trigger.moveComponent({ id, pos }),
-            )}
+            // onDragStart={useConstant(
+            // (pos) => ComponentStore.trigger.moveComponent({ id, pos }),
+            // )}
             onDragStop={useConstant(
               (pos) => ComponentStore.trigger.moveComponent({ id, pos }),
             )}
           >
           </Gate>
-        ))}
+        )).toArray()}
       </GridSurface>
     </DropTarget>
   );
