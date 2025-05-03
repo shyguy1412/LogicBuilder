@@ -9,6 +9,7 @@ import { DROP_GROUPS } from "@/components/App";
 import { Gate, LogicOperation } from "@/components/circuit-components/Gate";
 import { Point } from "@/lib/types/Geometry";
 import { useSelector } from "@xstate/store/react";
+import { useConstant } from "@/lib/components/hooks";
 
 type Props = {};
 
@@ -140,10 +141,12 @@ export function Workspace({}: Props) {
             key={id}
             {...pos}
             op={op}
-            onDragStart={(pos) =>
-              ComponentStore.trigger.moveComponent({ id, pos })}
-            onDragStop={(pos) =>
-              ComponentStore.trigger.moveComponent({ id, pos })}
+            onDragStart={useConstant(
+              (pos) => ComponentStore.trigger.moveComponent({ id, pos }),
+            )}
+            onDragStop={useConstant(
+              (pos) => ComponentStore.trigger.moveComponent({ id, pos }),
+            )}
           >
           </Gate>
         ))}
