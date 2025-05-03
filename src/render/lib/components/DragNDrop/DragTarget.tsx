@@ -35,8 +35,8 @@ const createGhostElement = (
 
   //hides the native ghost image
   ev.dataTransfer?.setDragImage(document.head, 0, 0);
-  
-  if(!ghostElement) return;
+
+  if (!ghostElement) return;
 
   const id = Math.random();
   ev.dataTransfer?.setData(`ghost-${id}`, "");
