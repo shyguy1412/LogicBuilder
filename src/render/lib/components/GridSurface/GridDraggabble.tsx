@@ -12,6 +12,7 @@ import { useControlledState } from "@/lib/components/hooks";
 import { Point } from "@/lib/types/Geometry";
 import { OffsetContext } from "@/lib/components/GridSurface";
 import { HTMLAttributes, memo, PropsWithChildren } from "preact/compat";
+import { access } from "original-fs";
 
 type Props = {
   width: number;
@@ -78,7 +79,7 @@ export const GridDraggable = memo((
     //   if (oldPos.x == pos.x && oldPos.y == pos.y) return oldPos;
     //   return pos;
     // });
-    // setPos(pos);
+    setPos(pos);
   }, [grabOffset, offsetAtom]);
 
   useEffect(() => {
@@ -112,7 +113,20 @@ export const GridDraggable = memo((
       data-pos-y={Math.round(pos.y)}
       onMouseDown={(event) => {
         event.stopPropagation();
-        const boundingBox = event.currentTarget.getBoundingClientRect();
+        const transform = getComputedStyle(event.currentTarget).transform
+          .slice(7, -1)
+          .split(", ")
+          .map(Number);
+
+        const cos = transform[0]!;
+        const sin = transform[1]!;
+        const angle = Math.acos(cos) * Math.sign(sin);
+        const angleDeg = (angle * (180 / Math.PI) + 360) % 360;
+        const boundingBox = adjustBoundingBoxForRotation(
+          angleDeg,
+          event.currentTarget.getBoundingClientRect(),
+        );
+
         const grabOffset = {
           x: event.clientX - boundingBox.x,
           y: event.clientY - boundingBox.y,
@@ -125,3 +139,34 @@ export const GridDraggable = memo((
     </div>
   );
 });
+
+const adjustBoundingBoxForRotation = (
+  angle: number,
+  boundingBox: DOMRect,
+): Point => {
+  if (angle > 90 && angle <= 180) {
+    return {
+      x: boundingBox.right,
+      y: boundingBox.top,
+    };
+  }
+
+  if (angle > 180 && angle <= 270) {
+    return {
+      x: boundingBox.right,
+      y: boundingBox.bottom,
+    };
+  }
+
+  if (angle > 270 && angle <= 360) {
+    return {
+      x: boundingBox.left,
+      y: boundingBox.bottom,
+    };
+  }
+
+  return {
+    x: boundingBox.x,
+    y: boundingBox.y,
+  };
+};
