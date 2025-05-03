@@ -30,7 +30,7 @@
   color: var(--clr-surface-a30);
 }
 
-.view [style-sidebar],
+.view [style-sidebar-view],
 .view [style-sidebar-menu] {
   border-right: 1px solid var(--clr-primary-a10);
 }
