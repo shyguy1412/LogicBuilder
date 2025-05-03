@@ -38,6 +38,9 @@ type Props = {
   onDrag?: (pos: Point) => void;
   onDragStop?: (pos: Point) => void;
 };
+export namespace Gate {
+  export type Props = Parameters<typeof Gate>[0];
+}
 
 export const Gate = memo(({
   onDragStart,

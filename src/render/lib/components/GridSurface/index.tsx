@@ -23,6 +23,10 @@ type Props = {
 
 export const OffsetContext = createContext(createAtom({ x: 0, y: 0 }));
 
+export namespace GridSurface {
+  export type Props = Parameters<typeof GridSurface>[0];
+}
+
 export function GridSurface(
   {
     children,

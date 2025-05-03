@@ -74,6 +74,9 @@ const createGhostElement = (
   }, { once: true });
 };
 
+export namespace DragTarget {
+  export type Props = Parameters<typeof DragTarget>[0];
+}
 export const DragTarget = memo(
   ({ group, data, onDragStart, ghostElement, ...attr }: Props) => {
     Lumber.log(Lumber.RENDER, "DRAG TARGET RENDER");

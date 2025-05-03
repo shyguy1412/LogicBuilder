@@ -23,6 +23,10 @@ type Props = {
   onDragStop?: (pos: Point) => void;
 };
 
+export namespace GridDraggable {
+  export type Props = Parameters<typeof GridDraggable>[0];
+}
+
 export const GridDraggable = memo((
   {
     width,
