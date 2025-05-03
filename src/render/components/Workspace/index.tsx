@@ -141,6 +141,8 @@ export function Workspace({}: Props) {
             key={id}
             {...pos}
             op={op}
+            inputs={[null, null]}
+            output={[null]}
             // onDragStart={useConstant(
             // (pos) => ComponentStore.trigger.moveComponent({ id, pos }),
             // )}

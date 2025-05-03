@@ -1,14 +1,55 @@
 .gate {
+  --pin-size: 0.4em;
+  --border-width: max(1px, 0.05em);
+
   height: 100%;
   width: 100%;
   box-sizing: border-box;
 
   color: var(--clr-foreground-a0);
   background-color: var(--clr-surface-a0);
-  border: max(1px, 0.05em) solid currentColor;
-
-  padding-left: 0.5em;
-  padding-top: 0.3em;
+  border: var(--border-width) solid currentColor;
 
   font-size: 1.3em;
+  position: relative;
+}
+
+.symbol {
+  position: relative;
+  left: 0.5em;
+  top: 0.3em;
+}
+
+.inputs > div, .output {
+  background-color: var(--clr-surface-dark-a0);
+  border: var(--border-width) solid currentColor;
+}
+
+.inputs {
+  height: 100%;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  transform: translateX(calc(-50% - var(--border-width) / 2));
+}
+
+.inputs > div, .output {
+  box-sizing: border-box;
+
+  width: var(--pin-size);
+  height: var(--pin-size);
+
+  border-radius: 100%;
+}
+
+.output {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translate(calc(50% + var(--border-width) / 2), -50%);
+}
+
+.output[style-not] {
+  background-color: var(--clr-surface-light-a0);
 }

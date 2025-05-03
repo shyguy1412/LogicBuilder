@@ -34,6 +34,8 @@ type Props = {
   x?: number;
   y?: number;
   op: LogicOperation;
+  inputs: any[];
+  output: any;
   onDragStart?: (pos: Point) => void;
   onDrag?: (pos: Point) => void;
   onDragStop?: (pos: Point) => void;
@@ -43,6 +45,7 @@ export namespace Gate {
 }
 
 export const Gate = memo(({
+  inputs,
   onDragStart,
   onDrag,
   onDragStop,
@@ -59,8 +62,11 @@ export const Gate = memo(({
     onDragStop,
   );
 
-  const symbol = useMemo(
-    () => LogicSymbol[props.op].replace(/!$/, ""),
+  const [symbol, negated] = useMemo(
+    () => [
+      LogicSymbol[props.op].replace(/!$/, ""),
+      LogicSymbol[props.op].endsWith("!"),
+    ],
     [props.op],
   );
 
@@ -75,8 +81,15 @@ export const Gate = memo(({
         onDrag={onDrag}
         onDragStop={setPos}
       >
-        <div class={style.gate}>
-          {symbol}
+        <div
+          class={style.gate}
+          // onMouseDown={(e) => console.log(e.currentTarget)}>
+        >
+          <div class={style.inputs}>
+            {inputs.map(() => <div></div>)}
+          </div>
+          <span class={style.symbol} style-operation-symbol>{symbol}</span>
+          <div style-not={negated ? "" : undefined} class={style.output} />
         </div>
       </GridDraggable>
     </Lumber.Supress>

@@ -17,10 +17,12 @@ export const ComponentList = memo(() => {
           key={op}
           group={DROP_GROUPS.CIRCUIT_COMPONENT}
           data={{ op }}
-          ghostElement={() => <Gate op={op}></Gate>}
+          ghostElement={() => (
+            <Gate inputs={[null, null]} output={null} op={op}></Gate>
+          )}
         >
           {op.toUpperCase()}
-          <Gate op={op}></Gate>
+          <Gate inputs={[null, null]} output={null} op={op}></Gate>
         </DragTarget>
       ))}
     </div>
