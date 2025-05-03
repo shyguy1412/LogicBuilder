@@ -26,7 +26,7 @@ export const Sidebar = memo(({ menus }: Props) => {
       (prev, cur) => (prev[cur.name] = cur.menu, prev),
       {} as RouteTable,
     );
-    return createRouter(routes, menus[0][0].name);
+    return createRouter(routes, menus[0]?.[0]?.name??"@None");
   }, [menus]);
 
   const { View } = useRouter(Router);

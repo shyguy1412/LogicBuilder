@@ -43,7 +43,7 @@ const ComponentStore = createStore({
         el.id == event.id
       );
       if (componentIndex < 0) throw new Error("Invalid ID");
-      const component = context.components[componentIndex];
+      const component = context.components[componentIndex]!;
 
       component.pos = event.pos;
       return {
@@ -105,7 +105,7 @@ export function Workspace({}: Props) {
       Lumber.log("EVENT", `COMPONENT DROPPED AT X:${data.x};Y:${data.y}`);
       const randomOp = Object.values(
         LogicOperation,
-      )[Date.now() % Object.keys(LogicOperation).length];
+      )[Date.now() % Object.keys(LogicOperation).length]!;
 
       ComponentStore.trigger.addComponent({
         component: createGateComponent(

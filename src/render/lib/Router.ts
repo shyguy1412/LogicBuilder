@@ -1,6 +1,6 @@
 import { createStore } from "@xstate/store";
 import { useSelector } from "@xstate/store/react";
-import { h } from "preact";
+import { Fragment, h } from "preact";
 import { useCallback } from "preact/hooks";
 
 export type View = () => h.JSX.Element;
@@ -10,16 +10,16 @@ export type Router<R extends string> = ReturnType<
 >;
 export type RouteTable<R extends string = string> = { [route in R]: View };
 
-const None = () => false;
+const None: View = () => h(Fragment, {});
 
 export function createRouter<R extends RouteTable>(
   routeTable: R,
   initial: keyof R,
 ) {
   const store = createStore({
-    context: { route: initial, view: routeTable[initial] },
+    context: { route: initial, view: routeTable[initial]! },
     on: {
-      setRoute: (_, event: { route: keyof R }) => ({
+      setRoute: (_, event: { route: keyof R; }) => ({
         route: event.route,
         view: routeTable[event.route] ?? None,
       }),
