@@ -1,6 +1,6 @@
 import style from "./Workspace.module.css";
 import { h } from "preact";
-import { useMemo, useState } from "preact/hooks";
+import { useCallback, useMemo, useState } from "preact/hooks";
 import { createAtom, createStore } from "@xstate/store";
 import { Lumber } from "@/lib/log/Lumber";
 import { GridSurface } from "@/lib/components/GridSurface";
@@ -32,10 +32,10 @@ const createGateComponent = (x: number, y: number, op: LogicOperation) => ({
 
 const ComponentStore = createStore({
   context: {
-    components: [createGateComponent(0, 0, "and")] as ICircuitComponent[],
+    components: [createGateComponent(0, 0, "and")] as IGateComponent[],
   },
   on: {
-    addComponent: (context, event: { component: ICircuitComponent }) => ({
+    addComponent: (context, event: { component: IGateComponent }) => ({
       components: [...context.components, event.component],
     }),
     moveComponent: (context, event: { id: string; pos: Point }) => {
@@ -69,6 +69,55 @@ export function Workspace({}: Props) {
     ({ context }) => context.components,
   );
 
+  const onDragOver = useCallback(
+    ((ev, data, ghost) => {
+      if (!ghost) return;
+      const offset = offsetStore.get();
+
+      const positionOnGrid = calculatePositionOnGrid(
+        ghost,
+        ev.currentTarget,
+        offset,
+      );
+
+      snapGhostIntoGrid(
+        ghost,
+        ev.currentTarget,
+        offset,
+        positionOnGrid,
+      );
+
+      data.x = positionOnGrid.x;
+      data.y = positionOnGrid.y;
+    }) satisfies DropTarget.Props["onDragOver"],
+    [offsetStore],
+  );
+
+  const onDragLeave = useCallback(
+    ((_event, _data, ghost) => {
+      if (!ghost) return;
+      document.body.append(ghost);
+    }) satisfies DropTarget.Props["onDragLeave"],
+    [],
+  );
+  const onDrop = useCallback(
+    ((e, data: any) => {
+      Lumber.log("EVENT", `COMPONENT DROPPED AT X:${data.x};Y:${data.y}`);
+      const randomOp = Object.values(
+        LogicOperation,
+      )[Date.now() % Object.keys(LogicOperation).length];
+
+      ComponentStore.trigger.addComponent({
+        component: createGateComponent(
+          data.x,
+          data.y,
+          randomOp,
+        ),
+      });
+    }) satisfies DropTarget.Props["onDrop"],
+    [],
+  );
+
   return (
     <GridSurface
       zoom={zoom}
@@ -82,39 +131,9 @@ export function Workspace({}: Props) {
       <DropTarget
         class={style.workspace}
         accept={DROP_GROUPS.CIRCUIT_COMPONENT}
-        onDragOver={(ev, data, ghost) => {
-          if (!ghost) return;
-          const offset = offsetStore.get();
-
-          const positionOnGrid = calculatePositionOnGrid(
-            ghost,
-            ev.currentTarget,
-            offset,
-          );
-
-          snapGhostIntoGrid(
-            ghost,
-            ev.currentTarget,
-            offset,
-            positionOnGrid,
-          );
-
-          data.x = positionOnGrid.x;
-          data.y = positionOnGrid.y;
-        }}
-        onDragLeave={(_event, _data, ghost) => document.body.append(ghost!)}
-        onDrop={(e, data: any) => {
-          Lumber.log("EVENT", `COMPONENT DROPPED AT X:${data.x};Y:${data.y}`);
-          ComponentStore.trigger.addComponent({
-            component: createGateComponent(
-              data.x,
-              data.y,
-              Object.values(
-                LogicOperation,
-              )[Date.now() % Object.keys(LogicOperation).length],
-            ),
-          });
-        }}
+        onDragOver={onDragOver}
+        onDragLeave={onDragLeave}
+        onDrop={onDrop}
       >
         {...components.map(({ id, pos, op }) => (
           <Gate
