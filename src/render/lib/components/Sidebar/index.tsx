@@ -29,7 +29,7 @@ export const Sidebar = memo(({ menus }: Props) => {
     return createRouter(routes, menus[0]?.[0]?.name ?? "@None");
   }, [menus]);
 
-  const { View } = useRouter(Router);
+  const { View, route } = useRouter(Router);
 
   const width = useMemo(() => createAtom(50), []);
 
@@ -55,9 +55,7 @@ export const Sidebar = memo(({ menus }: Props) => {
       return unsubscribe;
     }, [width]);
 
-    const view = View();
-
-    if (!view) return false;
+    if (route == "@None") return false;
 
     return (
       <div
@@ -65,10 +63,10 @@ export const Sidebar = memo(({ menus }: Props) => {
         data-width={width.get()}
         ref={ref}
       >
-        {view}
+        <View></View>
       </div>
     );
-  }, [View, width]);
+  }, [View, width, route]);
 
   return (
     <div class={style.sidebar} style-sidebar="">
