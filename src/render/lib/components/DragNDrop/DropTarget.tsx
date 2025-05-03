@@ -88,8 +88,6 @@ export const DropTarget = memo((
         onDragLeave?.(e, data, ghost);
       }}
       onDrop={(e) => {
-        console.log(e);
-
         const data = getDataFromEvent(e);
         onDrop?.(e, data);
       }}
