@@ -5,7 +5,8 @@ import { Point } from "@/lib/types/Geometry";
 import { Fragment, h } from "preact";
 import { memo, useCallback, useMemo } from "preact/compat";
 import { Lumber } from "@/lib/log/Lumber";
-import { Atom } from "@xstate/store";
+import { Atom, createAtom } from "@xstate/store";
+import { GraphNode } from "@/components/circuit-components/GraphNode";
 
 type Props = {
   from: Atom<Point>;
@@ -92,5 +93,23 @@ export const Wire = memo(({
     </>
   );
 });
+
+export class WireNode extends GraphNode {
+  to: Atom<Point>;
+
+  constructor(from: Atom<Point>, to: Atom<Point>) {
+    super(from);
+    this.to = to;
+  }
+
+  render(): h.JSX.Element {
+    return (
+      <Wire
+        from={this.pos}
+        to={this.to}
+      />
+    );
+  }
+}
 
 export * from "./Joint";

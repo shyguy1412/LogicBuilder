@@ -4,6 +4,7 @@ import { Gate, LogicOperation } from "@/components/circuit-components/Gate";
 import { DragTarget } from "@/lib/components/DragNDrop";
 import { useConstant } from "@/lib/components/hooks";
 import { Lumber } from "@/lib/log/Lumber";
+import { createAtom } from "@xstate/store";
 import { h } from "preact";
 import { memo } from "preact/compat";
 
@@ -18,11 +19,23 @@ export const ComponentList = memo(() => {
           group={DROP_GROUPS.CIRCUIT_COMPONENT}
           data={{ op }}
           ghostElement={() => (
-            <Gate inputs={[null, null]} output={null} op={op}></Gate>
+            <Gate
+              pos={useConstant(createAtom({ x: 0, y: 0 }))}
+              inputs={[null, null]}
+              output={null}
+              op={op}
+            >
+            </Gate>
           )}
         >
           {op.toUpperCase()}
-          <Gate inputs={[null, null]} output={null} op={op}></Gate>
+          <Gate
+            pos={useConstant(createAtom({ x: 0, y: 0 }))}
+            inputs={[null, null]}
+            output={null}
+            op={op}
+          >
+          </Gate>
         </DragTarget>
       ))}
     </div>

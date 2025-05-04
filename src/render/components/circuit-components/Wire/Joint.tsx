@@ -1,3 +1,4 @@
+import { GraphNode } from "@/components/circuit-components/GraphNode";
 import style from "./Wire.module.css";
 import { GridDraggable } from "@/lib/components/GridSurface";
 import { useAtom } from "@/lib/components/hooks";
@@ -24,3 +25,9 @@ export const Joint = memo(({ ...props }: Props) => {
     />
   );
 });
+
+export class JointNode extends GraphNode {
+  render(): h.JSX.Element {
+    return <Joint pos={this.pos} />;
+  }
+}

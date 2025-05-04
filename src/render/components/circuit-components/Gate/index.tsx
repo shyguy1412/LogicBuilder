@@ -1,3 +1,4 @@
+import { GraphNode } from "@/components/circuit-components/GraphNode";
 import style from "./Gate.module.css";
 import { GridDraggable } from "@/lib/components/GridSurface";
 import { useAtom, useControlledState } from "@/lib/components/hooks";
@@ -34,8 +35,8 @@ export const LogicSymbol = {
 type Props = {
   pos: Atom<Point>;
   op: LogicOperation;
-  inputs: any[];
-  output: any;
+  inputs: GraphNode.InputPin[];
+  output: GraphNode.OutputPin[];
 };
 export namespace Gate {
   export type Props = Parameters<typeof Gate>[0];
@@ -83,3 +84,25 @@ export const Gate = memo(({
     </Lumber.Supress>
   );
 });
+
+export class GateNode extends GraphNode {
+  op: LogicOperation;
+  constructor(pos: Atom<Point>, op: LogicOperation) {
+    super(pos);
+    this.op = op;
+    this.inputs = [undefined, undefined] as any;
+  }
+
+  render(): h.JSX.Element {
+    console.log(this);
+
+    return (
+      <Gate
+        pos={this.pos}
+        op={this.op}
+        inputs={this.inputs}
+        output={this.outputs}
+      />
+    );
+  }
+}
