@@ -1,14 +1,13 @@
 .wire {
   content: "";
   display: block;
-  --thickness: 0.1em;
+  --thickness: 0.05em;
   width: calc(attr(data-wire-length em) + var(--thickness));
-  height: var(--thickness);
+  height: max(1px, var(--thickness));
   background-color: var(--clr-foreground-a0);
   transform: translate(-50%, -50%) rotate(attr(data-wire-angle rad))
     translate(calc(50% + var(--thickness) * -0.5));
   border-radius: var(--thickness);
-  z-index: 999;
 }
 
 .handle {
@@ -19,4 +18,14 @@
 
 [style-wire-to] {
   background-color: #00ff0088;
+}
+
+.joint {
+  --size: 0.2em;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  width: max(1px, var(--size));
+  height: max(1px, var(--size));
+  background-color: var(--clr-foreground-a0);
+  border-radius: 100%;
 }

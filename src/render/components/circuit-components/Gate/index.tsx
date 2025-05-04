@@ -1,8 +1,9 @@
 import style from "./Gate.module.css";
 import { GridDraggable } from "@/lib/components/GridSurface";
-import { useControlledState } from "@/lib/components/hooks";
+import { useAtom, useControlledState } from "@/lib/components/hooks";
 import { Lumber } from "@/lib/log/Lumber";
 import { Point } from "@/lib/types/Geometry";
+import { Atom } from "@xstate/store";
 import { h } from "preact";
 import { memo, useMemo } from "preact/compat";
 
@@ -31,14 +32,10 @@ export const LogicSymbol = {
 } satisfies { [op in LogicOperation]: string };
 
 type Props = {
-  x?: number;
-  y?: number;
+  pos: Atom<Point>;
   op: LogicOperation;
   inputs: any[];
   output: any;
-  onDragStart?: (pos: Point) => void;
-  onDrag?: (pos: Point) => void;
-  onDragStop?: (pos: Point) => void;
 };
 export namespace Gate {
   export type Props = Parameters<typeof Gate>[0];
@@ -46,9 +43,6 @@ export namespace Gate {
 
 export const Gate = memo(({
   inputs,
-  onDragStart,
-  onDrag,
-  onDragStop,
   ...props
 }: Props) => {
   Lumber.log(Lumber.RENDER, "GATE RENDER");
@@ -56,11 +50,7 @@ export const Gate = memo(({
   //this lets a Gate manage it position internally.
   //Position updates from the parent take precedence but dont need to happen
   //for a component to move
-  const [{ x, y }, setPos] = useControlledState(
-    (x, y) => ({ x: x ?? 0, y: y ?? 0 }),
-    [props.x, props.y],
-    onDragStop,
-  );
+  const [{ x, y }, setPos] = useAtom(props.pos);
 
   const [symbol, negated] = useMemo(
     () => [
@@ -77,8 +67,6 @@ export const Gate = memo(({
         height={4}
         x={x ?? 0}
         y={y ?? 0}
-        onDragStart={onDragStart}
-        onDrag={onDrag}
         onDragStop={setPos}
       >
         <div

@@ -1,7 +1,7 @@
 import style from "./Workspace.module.css";
 import { h } from "preact";
 import { useCallback, useMemo, useState } from "preact/hooks";
-import { createAtom, createStore } from "@xstate/store";
+import { Atom, createAtom, createStore } from "@xstate/store";
 import { Lumber } from "@/lib/log/Lumber";
 import { GridSurface } from "@/lib/components/GridSurface";
 import { DropTarget } from "@/lib/components/DragNDrop";
@@ -9,50 +9,35 @@ import { DROP_GROUPS } from "@/components/App";
 import { Gate, LogicOperation } from "@/components/circuit-components/Gate";
 import { Point } from "@/lib/types/Geometry";
 import { useSelector } from "@xstate/store/react";
-import { useConstant } from "@/lib/components/hooks";
-import { Wire } from "@/components/circuit-components/Wire";
+import { Joint, Wire } from "@/components/circuit-components/Wire";
 
 type Props = {};
+type GraphNode = any;
 
-interface ICircuitComponent {
-  id: string;
-  pos: Point;
-  type: string;
-}
+const createGateComponent = (x: number, y: number, op: LogicOperation) => {
+  const node = {
+    type: "gate",
+    op,
+    pos: createAtom({ x, y }),
+    id: new Date(Math.random() * 100_000_000_000_000).toISOString(),
+    inputs: [],
+    outputs: [],
+  } satisfies GraphNode;
 
-interface IGateComponent extends ICircuitComponent {
-  type: "gate";
-  op: LogicOperation;
-}
-
-const createGateComponent = (x: number, y: number, op: LogicOperation) => ({
-  type: "gate",
-  op,
-  pos: { x, y },
-  id: new Date(Math.random() * 100_000_000_000_000).toISOString(),
-} satisfies IGateComponent);
+  return node;
+};
 
 const ComponentStore = createStore({
   context: {
-    components: new Map() as Map<string, IGateComponent>,
+    components: new Map() as Map<string, GraphNode>,
   },
   on: {
-    addComponent: (context, event: { component: IGateComponent }) => ({
+    addComponent: (context, event: { component: GraphNode }) => ({
       components: new Map(context.components).set(
         event.component.id,
         event.component,
       ),
     }),
-    moveComponent: (context, event: { id: string; pos: Point }) => {
-      const component = context.components.get(event.id);
-      if (!component) throw new Error("invalid component");
-
-      component.pos = event.pos;
-
-      return {
-        components: new Map(context.components),
-      };
-    },
   },
 });
 
@@ -66,7 +51,7 @@ export function Workspace({}: Props) {
   const offsetStore = useMemo(() => createAtom({ x: 0, y: 0 }), []);
   const offset = offsetStore.get();
 
-  const [zoom, setZoom] = useState(5);
+  const [zoom, setZoom] = useState(1);
 
   const components = useSelector(
     ComponentStore,
@@ -120,6 +105,20 @@ export function Workspace({}: Props) {
     [],
   );
 
+  const joint = createAtom({ x: 9, y: 9 });
+  const radius = 5;
+  const resolution = 28;
+
+  const wires = Array(resolution).fill(joint.get()).map(({ x, y }, i) => (
+    <Wire
+      from={joint}
+      to={createAtom({
+        x: Math.round(x + radius * Math.cos(Math.PI * 2 / resolution * i)),
+        y: Math.round(y + radius * Math.sin(Math.PI * 2 / resolution * i)),
+      })}
+    />
+  ));
+
   return (
     <DropTarget
       class={style.workspace}
@@ -137,92 +136,11 @@ export function Workspace({}: Props) {
         offsetY={offset.y}
         onOffsetUpdate={(o) => offsetStore.set(o)}
       >
-        {...components.map(({ id, pos, op }) => (
-          <Gate
-            key={id}
-            {...pos}
-            op={op}
-            inputs={[null, null]}
-            output={[null]}
-            // onDragStart={useConstant(
-            // (pos) => ComponentStore.trigger.moveComponent({ id, pos }),
-            // )}
-            onDragStop={useConstant(
-              (pos) => ComponentStore.trigger.moveComponent({ id, pos }),
-            )}
-          >
-          </Gate>
-        )).toArray()}
-        {
-          /* <Wire
-          from={{x: 3, y: 5 }}
-          to={{x: 8, y: 8 }}
-        /> */
-        }
-        <Wire
-          from={{ x: 9, y: 9 }}
-          to={{ x: 7, y: 7 }}
+        {...components.map((props) => <Node {...props} />).toArray()}
+        <Joint
+          pos={joint}
         />
-        <Wire
-          from={{ x: 9, y: 9 }}
-          to={{ x: 8, y: 7 }}
-        />
-        <Wire
-          from={{ x: 9, y: 9 }}
-          to={{ x: 9, y: 7 }}
-        />
-        <Wire
-          from={{ x: 9, y: 9 }}
-          to={{ x: 10, y: 7 }}
-        />
-        <Wire
-          from={{ x: 9, y: 9 }}
-          to={{ x: 11, y: 7 }}
-        />
-        <Wire
-          from={{ x: 9, y: 9 }}
-          to={{ x: 11, y: 8 }}
-        />
-        <Wire
-          from={{ x: 9, y: 9 }}
-          to={{ x: 11, y: 9 }}
-        />
-        <Wire
-          from={{ x: 9, y: 9 }}
-          to={{ x: 11, y: 10 }}
-        />
-        <Wire
-          from={{ x: 9, y: 9 }}
-          to={{ x: 11, y: 11 }}
-        />
-        <Wire
-          from={{ x: 9, y: 9 }}
-          to={{ x: 10, y: 11 }}
-        />
-        <Wire
-          from={{ x: 9, y: 9 }}
-          to={{ x: 9, y: 11 }}
-        />
-        <Wire
-          from={{ x: 9, y: 9 }}
-          to={{ x: 8, y: 11 }}
-        />
-        <Wire
-          from={{ x: 9, y: 9 }}
-          to={{ x: 7, y: 11 }}
-        />
-        <Wire
-          from={{ x: 9, y: 9 }}
-          to={{ x: 7, y: 10 }}
-        />
-        <Wire
-          from={{ x: 9, y: 9 }}
-          to={{ x: 7, y: 9 }}
-        />
-        <Wire
-          from={{ x: 9, y: 9 }}
-          to={{ x: 7, y: 8 }}
-        />
+        {...wires}
       </GridSurface>
     </DropTarget>
   );
@@ -262,4 +180,17 @@ function snapGhostIntoGrid(
   const em = +getComputedStyle(grid).fontSize.slice(0, -2);
   ghost.setAttribute("data-pos-x", (position.x * em) + "");
   ghost.setAttribute("data-pos-y", (position.y * em) + "");
+}
+
+function Node({ type, parent, output, id, ...props }: GraphNode) {
+  console.log(props);
+
+  switch (type) {
+    case "gate":
+      return <Gate {...props} />;
+    case "wire":
+      return;
+    case "joint":
+      return;
+  }
 }

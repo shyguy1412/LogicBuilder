@@ -1,14 +1,15 @@
-import { useControlledState } from "@/lib/components/hooks";
+import { useAtom, useControlledState } from "@/lib/components/hooks";
 import style from "./Wire.module.css";
 import { GridDraggable } from "@/lib/components/GridSurface";
 import { Point } from "@/lib/types/Geometry";
 import { Fragment, h } from "preact";
 import { memo, useCallback, useMemo } from "preact/compat";
 import { Lumber } from "@/lib/log/Lumber";
+import { Atom } from "@xstate/store";
 
 type Props = {
-  from: Point;
-  to: Point;
+  from: Atom<Point>;
+  to: Atom<Point>;
   onFromUpdate?: (from: Point) => void;
   onToUpdate?: (to: Point) => void;
 };
@@ -23,15 +24,8 @@ export const Wire = memo(({
 }: Props) => {
   Lumber.log(Lumber.RENDER, "WIRE RENDER");
 
-  const [from, setFrom] = useControlledState(
-    (from) => from,
-    [props.from],
-  );
-
-  const [to, setTo] = useControlledState(
-    (to) => to,
-    [props.to],
-  );
+  const [from, setFrom] = useAtom(props.from);
+  const [to, setTo] = useAtom(props.to);
 
   const [length, angle] = useMemo(
     () => [
@@ -98,3 +92,5 @@ export const Wire = memo(({
     </>
   );
 });
+
+export * from "./Joint";

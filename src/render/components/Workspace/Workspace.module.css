@@ -8,6 +8,7 @@
   z-index: 1;
 }
 
-[style-grid-surface] {
+.workspace [style-grid-surface] {
   color: var(--clr-surface-a40);
+  --dot-size: max(1px, 0.0575em);
 }
