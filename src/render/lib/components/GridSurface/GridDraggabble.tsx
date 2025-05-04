@@ -99,7 +99,7 @@ export const GridDraggable = memo((
     document.body.style.cursor = "grabbing"; //! todo overwrite other cursors
 
     return () => controller.abort();
-  }, [grabOffset, posAtom, onDragStop]);
+  }, [grabOffset, posAtom, onDragStop, movehandler]);
 
   return (
     <div
