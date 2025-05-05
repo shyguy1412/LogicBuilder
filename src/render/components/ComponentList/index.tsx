@@ -22,7 +22,6 @@ export const ComponentList = memo(() => {
             <Gate
               pos={useConstant(createAtom({ x: 0, y: 0 }))}
               inputs={[undefined, undefined]}
-              output={undefined}
               op={op}
             >
             </Gate>
@@ -32,7 +31,6 @@ export const ComponentList = memo(() => {
           <Gate
             pos={useConstant(createAtom({ x: 0, y: 0 }))}
             inputs={[undefined, undefined]}
-            output={undefined}
             op={op}
           >
           </Gate>

@@ -1,105 +1,41 @@
 import style from "./Workspace.module.css";
 import { h } from "preact";
 import { useCallback, useMemo, useState } from "preact/hooks";
-import { createAtom, createStore } from "@xstate/store";
+import { createAtom } from "@xstate/store";
 import { Lumber } from "@/lib/log/Lumber";
 import { GridSurface } from "@/lib/components/GridSurface";
 import { DropTarget } from "@/lib/components/DragNDrop";
 import { DROP_GROUPS } from "@/components/App";
 import { Point } from "@/lib/types/Geometry";
-import { useSelector } from "@xstate/store/react";
-import { JointNode, WireNode } from "@/components/circuit-components/Wire";
-import { GraphNode } from "@/components/circuit-components/GraphNode";
 import { GateNode } from "@/components/circuit-components/Gate";
+import { useComponentGraph, useWorkspaceActions } from "@/store/workspace";
+import { JointNode, WireNode } from "@/components/circuit-components/Wire";
 
-// const createGateComponent = (x: number, y: number, op: LogicOperation) => {
-//   const node = {
-//     type: "gate",
-//     op,
-//     pos: createAtom({ x, y }),
-//     id: new Date(Math.random() * 100_000_000_000_000).toISOString(),
-//     inputs: [],
-//     outputs: [],
-//   } satisfies GraphNode;
-
-//   return node;
-// };
-
-// const wireNode = new WireNode();
-
-//! needs a way to find all other points with the same coordinate
-const WorkspaceStore = createStore({
-  context: {
-    pins: new Map<string, Set<GraphNode.Pin>>(),
-    componentGraph: new Set<GraphNode>(),
-  },
-  on: {
-    addNode: (context, event: { node: GraphNode }) => ({
-      componentGraph: new Set(context.componentGraph).add(
-        event.node,
-      ),
-      pins: event.node.pins().reduce((map, pin) => {
-        console.log(pin, event.node);
-        const key = stringifyPos(pin.pos);
-        const set = map.get(key) ?? new Set();
-        set.add(pin);
-        return map.set(key, set);
-      }, new Map(context.pins)),
-    }),
-    removeNode: (context, event: { node: GraphNode }) => ({
-      componentGraph: (context.componentGraph.delete(
-        event.node,
-      ),
-        new Set(context.componentGraph)),
-      pins: event.node.pins().reduce((map, pin) => {
-        const key = stringifyPos(pin.pos);
-        const set = map.get(key);
-        set?.delete(pin);
-        return map;
-      }, new Map(context.pins)),
-    }),
-  },
+useWorkspaceActions().addNode({
+  node: new GateNode(createAtom({ x: 9, y: 9 }), "and"),
 });
 
-WorkspaceStore.subscribe((state) => {
-  console.log(
-    state.context.componentGraph,
-    state.context.pins,
-  );
-});
-WorkspaceStore.trigger.addNode({
-  node: new GateNode(createAtom({ x: 0, y: 0 }), "and"),
-});
-
-function stringifyPos(obj: {}): string {
-  return JSON.stringify(
-    Object.fromEntries(
-      Object.entries(obj).toSorted(([a], [b]) => a.localeCompare(b)),
-    ),
-  );
-}
-
-console.log(
-  new Map()
-    .set(
-      stringifyPos({ y: 2, x: 1 }),
-      "first",
-    )
-    .set(
-      stringifyPos({ x: 1, y: 2 }),
-      "first",
-    ),
-);
-const joint = createAtom({ x: 9, y: 9 });
+// console.log(
+//   new Map()
+//     .set(
+//       stringifyPos({ y: 2, x: 1 }),
+//       "first",
+//     )
+//     .set(
+//       stringifyPos({ x: 1, y: 2 }),
+//       "first",
+//     ),
+// );
+const joint = createAtom({ x: 18, y: 18 });
 const radius = 5;
 const resolution = 28;
 
-WorkspaceStore.trigger.addNode({
+useWorkspaceActions().addNode({
   node: new JointNode(joint),
 });
 
 Array(resolution).fill(joint.get()).map(({ x, y }, i) =>
-  WorkspaceStore.trigger.addNode({
+  useWorkspaceActions().addNode({
     node: new WireNode(
       joint,
       createAtom({
@@ -110,6 +46,36 @@ Array(resolution).fill(joint.get()).map(({ x, y }, i) =>
   })
 );
 
+useWorkspaceActions().addNode({
+  node: new WireNode(
+    createAtom({ x: 5, y: 2 }),
+    createAtom({
+      x: 8,
+      y: 3,
+    }),
+  ),
+});
+
+useWorkspaceActions().addNode({
+  node: new WireNode(
+    createAtom({ x: 5, y: 4 }),
+    createAtom({
+      x: 8,
+      y: 5,
+    }),
+  ),
+});
+
+useWorkspaceActions().addNode({
+  node: new WireNode(
+    createAtom({ x: 15, y: 4 }),
+    createAtom({
+      x: 18,
+      y: 5,
+    }),
+  ),
+});
+
 export function Workspace() {
   Lumber.log(Lumber.RENDER, "WORKSPACE RENDER");
 
@@ -118,10 +84,7 @@ export function Workspace() {
 
   const [zoom, setZoom] = useState(1);
 
-  const components = useSelector(
-    WorkspaceStore,
-    ({ context }) => context.componentGraph,
-  ).values();
+  const components = useComponentGraph().values();
 
   const onDragOver = useCallback(
     ((ev, data, ghost) => {
@@ -158,8 +121,9 @@ export function Workspace() {
   const onDrop = useCallback(
     ((e, data: any) => {
       // Lumber.log("EVENT", `COMPONENT DROPPED AT X:${data.x};Y:${data.y}`, data);
+      const { addNode } = useWorkspaceActions();
 
-      WorkspaceStore.trigger.addNode({
+      addNode({
         node: new GateNode(
           createAtom({ x: data.x, y: data.y }),
           data.op,
@@ -186,7 +150,7 @@ export function Workspace() {
         offsetY={offset.y}
         onOffsetUpdate={(o) => offsetStore.set(o)}
       >
-        {...components.map((node) => node.render()).toArray()}
+        {...components.map((node) => <node.render />).toArray()}
         {
           /* <Joint
           pos={joint}

@@ -15,13 +15,16 @@ export namespace Joint {
   export type Props = Parameters<typeof Joint>[0];
 }
 export const Joint = memo(({ ...props }: Props) => {
-  const [pos] = useAtom(props.pos);
+  const [pos, setPos] = useAtom(props.pos);
   return (
     <GridDraggable
       width={1}
       height={1}
       {...pos}
+      style-wire
+      style-wire-joint
       class={style.joint}
+      onDrag={setPos}
     />
   );
 });

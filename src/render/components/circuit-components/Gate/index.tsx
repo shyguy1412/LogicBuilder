@@ -1,12 +1,13 @@
 import { GraphNode } from "@/components/circuit-components/GraphNode";
 import style from "./Gate.module.css";
 import { GridDraggable } from "@/lib/components/GridSurface";
-import { useAtom, useControlledState } from "@/lib/components/hooks";
+import { useAtom } from "@/lib/components/hooks";
 import { Lumber } from "@/lib/log/Lumber";
 import { Point } from "@/lib/types/Geometry";
 import { Atom } from "@xstate/store";
 import { h } from "preact";
-import { memo, useMemo } from "preact/compat";
+import { memo, useCallback, useEffect, useMemo } from "preact/compat";
+import { useWorkspaceActions } from "@/store/workspace";
 
 export const LogicOperation = {
   NOT: "not",
@@ -35,8 +36,9 @@ export const LogicSymbol = {
 type Props = {
   pos: Atom<Point>;
   op: LogicOperation;
-  inputs: (GraphNode.InputPin | undefined)[];
-  output: GraphNode.OutputPin | undefined;
+  inputs: [(GraphNode.InputPin | undefined), (GraphNode.InputPin | undefined)];
+  output?: GraphNode.OutputPin;
+  onDragStart?: GridDraggable.Props["onDragStart"];
 };
 export namespace Gate {
   export type Props = Parameters<typeof Gate>[0];
@@ -44,6 +46,8 @@ export namespace Gate {
 
 export const Gate = memo(({
   inputs,
+  output,
+  onDragStart,
   ...props
 }: Props) => {
   Lumber.log(Lumber.RENDER, "GATE RENDER");
@@ -68,11 +72,11 @@ export const Gate = memo(({
         height={4}
         x={x ?? 0}
         y={y ?? 0}
-        onDragStop={setPos}
+        onDragStart={onDragStart}
+        onDrag={setPos}
       >
         <div
           class={style.gate}
-        // onMouseDown={(e) => console.log(e.currentTarget)}>
         >
           <div class={style.inputs}>
             {inputs.map(() => <div></div>)}
@@ -87,22 +91,50 @@ export const Gate = memo(({
 
 export class GateNode extends GraphNode {
   op: LogicOperation;
+
+  protected inputs: [GraphNode.InputPin, GraphNode.InputPin];
+  protected outputs: [GraphNode.OutputPin];
+
+  get output() {
+    return this.outputs[0];
+  }
   constructor(pos: Atom<Point>, op: LogicOperation) {
     super(pos);
     this.op = op;
-    this.inputs = [this.createInputPin(), this.createInputPin()];
-    this.outputs = [this.createOutputPin()];
+    this.inputs = [
+      this.createInputPin({
+        x: 0,
+        y: 1,
+      }),
+      this.createInputPin({
+        x: 0,
+        y: 3,
+      }),
+    ];
+
+    this.outputs = [
+      this.createOutputPin({
+        x: 3,
+        y: 2,
+      }),
+    ];
   }
 
   render(): h.JSX.Element {
-    console.log(this);
-
+    const { lift } = useWorkspaceActions();
+    const onDragStart = useCallback(
+      (() => {
+        lift({ node: this });
+      }) satisfies GridDraggable.Props["onDragStart"],
+      [],
+    );
     return (
       <Gate
         pos={this.pos}
         op={this.op}
         inputs={this.inputs}
         output={this.outputs[0]}
+        onDragStart={onDragStart}
       />
     );
   }
