@@ -97,9 +97,9 @@ export const GridSurface = memo((
       const button = event.button;
       //check if another button is already pressed
       if ((event.buttons & (event.buttons - 1)) != 0) return;
-      if (event.button == 0 && !event.getModifierState("Control")) return;
-      if (event.button == 1) return;
-      if (event.button > 2) return;
+      // if (event.button == 0 && !event.getModifierState("Control")) return;
+      if (event.button >= 1) return;
+      // if (event.button > 2) return;
 
       const startPos = offset;
       const startMouse = {
@@ -114,10 +114,6 @@ export const GridSurface = memo((
       }, { signal });
 
       window.addEventListener("mouseup", (event) => {
-        console.log({ label: "released", button: event.button }, {
-          label: "stored",
-          button,
-        });
         if ((event.buttons & button) == 1) return;
         document.body.style.cursor = "";
         controller.abort();

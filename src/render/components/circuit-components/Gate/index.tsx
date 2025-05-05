@@ -35,8 +35,8 @@ export const LogicSymbol = {
 type Props = {
   pos: Atom<Point>;
   op: LogicOperation;
-  inputs: GraphNode.InputPin[];
-  output: GraphNode.OutputPin[];
+  inputs: (GraphNode.InputPin | undefined)[];
+  output: GraphNode.OutputPin | undefined;
 };
 export namespace Gate {
   export type Props = Parameters<typeof Gate>[0];
@@ -72,7 +72,7 @@ export const Gate = memo(({
       >
         <div
           class={style.gate}
-          // onMouseDown={(e) => console.log(e.currentTarget)}>
+        // onMouseDown={(e) => console.log(e.currentTarget)}>
         >
           <div class={style.inputs}>
             {inputs.map(() => <div></div>)}
@@ -90,7 +90,8 @@ export class GateNode extends GraphNode {
   constructor(pos: Atom<Point>, op: LogicOperation) {
     super(pos);
     this.op = op;
-    this.inputs = [undefined, undefined] as any;
+    this.inputs = [this.createInputPin(), this.createInputPin()];
+    this.outputs = [this.createOutputPin()];
   }
 
   render(): h.JSX.Element {
@@ -101,7 +102,7 @@ export class GateNode extends GraphNode {
         pos={this.pos}
         op={this.op}
         inputs={this.inputs}
-        output={this.outputs}
+        output={this.outputs[0]}
       />
     );
   }

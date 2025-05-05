@@ -8,12 +8,7 @@ import { DropTarget } from "@/lib/components/DragNDrop";
 import { DROP_GROUPS } from "@/components/App";
 import { Point } from "@/lib/types/Geometry";
 import { useSelector } from "@xstate/store/react";
-import {
-  Joint,
-  JointNode,
-  Wire,
-  WireNode,
-} from "@/components/circuit-components/Wire";
+import { JointNode, WireNode } from "@/components/circuit-components/Wire";
 import { GraphNode } from "@/components/circuit-components/GraphNode";
 import { GateNode } from "@/components/circuit-components/Gate";
 
@@ -32,8 +27,10 @@ import { GateNode } from "@/components/circuit-components/Gate";
 
 // const wireNode = new WireNode();
 
+//! needs a way to find all other points with the same coordinate
 const WorkspaceStore = createStore({
   context: {
+    pins: new Map<string, Set<GraphNode.Pin>>(),
     componentGraph: new Set<GraphNode>(),
   },
   on: {
@@ -41,14 +38,58 @@ const WorkspaceStore = createStore({
       componentGraph: new Set(context.componentGraph).add(
         event.node,
       ),
+      pins: event.node.pins().reduce((map, pin) => {
+        console.log(pin, event.node);
+        const key = stringifyPos(pin.pos);
+        const set = map.get(key) ?? new Set();
+        set.add(pin);
+        return map.set(key, set);
+      }, new Map(context.pins)),
+    }),
+    removeNode: (context, event: { node: GraphNode }) => ({
+      componentGraph: (context.componentGraph.delete(
+        event.node,
+      ),
+        new Set(context.componentGraph)),
+      pins: event.node.pins().reduce((map, pin) => {
+        const key = stringifyPos(pin.pos);
+        const set = map.get(key);
+        set?.delete(pin);
+        return map;
+      }, new Map(context.pins)),
     }),
   },
 });
 
+WorkspaceStore.subscribe((state) => {
+  console.log(
+    state.context.componentGraph,
+    state.context.pins,
+  );
+});
 WorkspaceStore.trigger.addNode({
   node: new GateNode(createAtom({ x: 0, y: 0 }), "and"),
 });
 
+function stringifyPos(obj: {}): string {
+  return JSON.stringify(
+    Object.fromEntries(
+      Object.entries(obj).toSorted(([a], [b]) => a.localeCompare(b)),
+    ),
+  );
+}
+
+console.log(
+  new Map()
+    .set(
+      stringifyPos({ y: 2, x: 1 }),
+      "first",
+    )
+    .set(
+      stringifyPos({ x: 1, y: 2 }),
+      "first",
+    ),
+);
 const joint = createAtom({ x: 9, y: 9 });
 const radius = 5;
 const resolution = 28;
