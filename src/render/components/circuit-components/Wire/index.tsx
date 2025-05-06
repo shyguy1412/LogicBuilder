@@ -1,4 +1,4 @@
-import { useAtom, useControlledState } from "@/lib/components/hooks";
+import { useAtom, useConstant } from "@/lib/hooks";
 import style from "./Wire.module.css";
 import { GridDraggable } from "@/lib/components/GridSurface";
 import { Point } from "@/lib/types/Geometry";

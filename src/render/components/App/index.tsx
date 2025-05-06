@@ -8,7 +8,7 @@ import { PiCircuitry, PiCpu, PiFile, PiGear } from "react-icons/pi";
 import { Lumber } from "@/lib/log/Lumber";
 import { Workspace } from "@/components/Workspace";
 import { ComponentList } from "@/components/ComponentList";
-import { useConstant } from "@/lib/components/hooks";
+import { useConstant } from "@/lib/hooks";
 
 export const Router = createRouter({
   workspace: () => <Workspace />,

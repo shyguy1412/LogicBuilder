@@ -5,7 +5,7 @@ import { useCallback, useRef } from "preact/hooks";
 import { createContext, h } from "preact";
 
 import { Lumber } from "@/lib/log/Lumber";
-import { useControlledState } from "@/lib/components/hooks";
+import { useControlledState } from "@/lib/hooks";
 import { createAtom } from "@xstate/store";
 
 type Point = { x: number; y: number };

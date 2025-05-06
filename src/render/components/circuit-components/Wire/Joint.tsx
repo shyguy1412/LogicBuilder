@@ -1,7 +1,7 @@
 import { GraphNode } from "@/components/circuit-components/GraphNode";
 import style from "./Wire.module.css";
 import { GridDraggable } from "@/lib/components/GridSurface";
-import { useAtom } from "@/lib/components/hooks";
+import { useAtom } from "@/lib/hooks";
 import { Point } from "@/lib/types/Geometry";
 import { Atom } from "@xstate/store";
 import { h } from "preact";

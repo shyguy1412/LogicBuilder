@@ -5,7 +5,7 @@ import { createRouter, Router, RouteTable, useRouter } from "@/lib/Router";
 import { IconType } from "react-icons";
 import { memo, PropsWithChildren, TargetedEvent } from "preact/compat";
 import { Lumber } from "@/lib/log/Lumber";
-import { useControlledState } from "@/lib/components/hooks";
+import { useControlledState } from "@/lib/hooks";
 
 export type Menu = {
   name: string;

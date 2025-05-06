@@ -2,7 +2,7 @@ import style from "./ComponentList.module.css";
 import { DROP_GROUPS } from "@/components/App";
 import { Gate, LogicOperation } from "@/components/circuit-components/Gate";
 import { DragTarget } from "@/lib/components/DragNDrop";
-import { useConstant } from "@/lib/components/hooks";
+import { useConstant } from "@/lib/hooks";
 import { Lumber } from "@/lib/log/Lumber";
 import { createAtom } from "@xstate/store";
 import { h } from "preact";

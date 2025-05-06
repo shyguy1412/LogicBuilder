@@ -1,10 +1,8 @@
-import { useConstant } from "@/lib/components/hooks";
 import { createStore } from "@xstate/store";
-import { createContext, Fragment, h } from "preact";
+import { createContext, h } from "preact";
 import {
   PropsWithChildren,
   useContext,
-  useEffect,
   useMemo,
 } from "preact/compat";
 
