@@ -1,6 +1,14 @@
 [package]
 name = "logic-circuit-engine"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
 
 [dependencies]
+wasm-bindgen = { version = "0.2", optional = true }
+
+[features]
+default = []
+wasm = ["wasm-bindgen"]
+
+[lib]
+crate-type = ["cdylib", "rlib"]
