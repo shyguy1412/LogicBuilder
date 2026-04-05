@@ -1,6 +1,6 @@
 import style from './ComponentList.module.css';
 import { DROP_GROUPS } from '@/render/components/App';
-import { Gate, LogicOperation } from '@/render/components/circuit-components/Gate';
+import { Gate, LogicOperation } from '@/render/components/CircuitComponents/Gate';
 import { DragTarget } from '@/lib/components/DragNDrop';
 import { useConstant } from '@/lib/hooks';
 import { Lumber } from '@/lib/log/Lumber';

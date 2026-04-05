@@ -8,7 +8,7 @@ import { DropTarget } from '@/lib/components/DragNDrop';
 import { DROP_GROUPS } from '@/render/components/App';
 import { Point } from '@/lib/types/Geometry';
 import { useComponentGraph, useWorkspaceActions } from '@/render/store/workspace';
-import { Gate } from '@/render/components/circuit-components/Gate';
+import { Gate } from '@/render/components/CircuitComponents/Gate';
 
 // useWorkspaceActions().addNode({
 //   node: new GateNode(createAtom({ x: 9, y: 9 }), "and"),
