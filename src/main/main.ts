@@ -5,7 +5,6 @@ import {
   ipcMain,
   Menu,
   MenuItem,
-  nativeTheme,
   session,
 } from "electron";
 

@@ -1,0 +1,3 @@
+[submodule "lce-ts-bindings/bondage"]
+	path = lce-ts-bindings/bondage
+	url = ../bondage

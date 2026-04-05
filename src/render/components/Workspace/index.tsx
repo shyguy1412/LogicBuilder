@@ -7,74 +7,62 @@ import { GridSurface } from "@/lib/components/GridSurface";
 import { DropTarget } from "@/lib/components/DragNDrop";
 import { DROP_GROUPS } from "@/components/App";
 import { Point } from "@/lib/types/Geometry";
-import { GateNode } from "@/components/circuit-components/Gate";
 import { useComponentGraph, useWorkspaceActions } from "@/store/workspace";
-import { JointNode, WireNode } from "@/components/circuit-components/Wire";
+import { Gate } from "@/components/circuit-components/Gate";
 
-useWorkspaceActions().addNode({
-  node: new GateNode(createAtom({ x: 9, y: 9 }), "and"),
-});
+// useWorkspaceActions().addNode({
+//   node: new GateNode(createAtom({ x: 9, y: 9 }), "and"),
+// });
 
-// console.log(
-//   new Map()
-//     .set(
-//       stringifyPos({ y: 2, x: 1 }),
-//       "first",
-//     )
-//     .set(
-//       stringifyPos({ x: 1, y: 2 }),
-//       "first",
+// const joint = createAtom({ x: 18, y: 18 });
+// const radius = 5;
+// const resolution = 28;
+
+// useWorkspaceActions().addNode({
+//   node: new JointNode(joint),
+// });
+
+// Array(resolution).fill(joint.get()).map(({ x, y }, i) =>
+//   useWorkspaceActions().addNode({
+//     node: new WireNode(
+//       joint,
+//       createAtom({
+//         x: Math.round(x + radius * Math.cos(Math.PI * 2 / resolution * i)),
+//         y: Math.round(y + radius * Math.sin(Math.PI * 2 / resolution * i)),
+//       }),
 //     ),
+//   })
 // );
-const joint = createAtom({ x: 18, y: 18 });
-const radius = 5;
-const resolution = 28;
 
-useWorkspaceActions().addNode({
-  node: new JointNode(joint),
-});
+// useWorkspaceActions().addNode({
+//   node: new WireNode(
+//     createAtom({ x: 5, y: 2 }),
+//     createAtom({
+//       x: 8,
+//       y: 3,
+//     }),
+//   ),
+// });
 
-Array(resolution).fill(joint.get()).map(({ x, y }, i) =>
-  useWorkspaceActions().addNode({
-    node: new WireNode(
-      joint,
-      createAtom({
-        x: Math.round(x + radius * Math.cos(Math.PI * 2 / resolution * i)),
-        y: Math.round(y + radius * Math.sin(Math.PI * 2 / resolution * i)),
-      }),
-    ),
-  })
-);
+// useWorkspaceActions().addNode({
+//   node: new WireNode(
+//     createAtom({ x: 5, y: 4 }),
+//     createAtom({
+//       x: 8,
+//       y: 5,
+//     }),
+//   ),
+// });
 
-useWorkspaceActions().addNode({
-  node: new WireNode(
-    createAtom({ x: 5, y: 2 }),
-    createAtom({
-      x: 8,
-      y: 3,
-    }),
-  ),
-});
-
-useWorkspaceActions().addNode({
-  node: new WireNode(
-    createAtom({ x: 5, y: 4 }),
-    createAtom({
-      x: 8,
-      y: 5,
-    }),
-  ),
-});
-
-useWorkspaceActions().addNode({
-  node: new WireNode(
-    createAtom({ x: 15, y: 4 }),
-    createAtom({
-      x: 18,
-      y: 5,
-    }),
-  ),
-});
+// useWorkspaceActions().addNode({
+//   node: new WireNode(
+//     createAtom({ x: 15, y: 4 }),
+//     createAtom({
+//       x: 18,
+//       y: 5,
+//     }),
+//   ),
+// });
 
 export function Workspace() {
   Lumber.log(Lumber.RENDER, "WORKSPACE RENDER");
@@ -84,7 +72,7 @@ export function Workspace() {
 
   const [zoom, setZoom] = useState(1);
 
-  const components = useComponentGraph().values();
+  const components = useComponentGraph().values().toArray();
 
   const onDragOver = useCallback(
     ((ev, data, ghost) => {
@@ -123,15 +111,19 @@ export function Workspace() {
       // Lumber.log("EVENT", `COMPONENT DROPPED AT X:${data.x};Y:${data.y}`, data);
       const { addNode } = useWorkspaceActions();
 
-      addNode({
-        node: new GateNode(
-          createAtom({ x: data.x, y: data.y }),
-          data.op,
-        ),
-      });
+      // addNode({
+      //   node: <Gate
+      //     inputs={2}
+      //     op={data.op}
+      //     pos={createAtom({ x: data.x, y: data.y })}
+      //   />
+      // });
     }) satisfies DropTarget.Props["onDrop"],
     [],
   );
+
+  console.log(components);
+  
 
   return (
     <DropTarget
@@ -150,7 +142,7 @@ export function Workspace() {
         offsetY={offset.y}
         onOffsetUpdate={(o) => offsetStore.set(o)}
       >
-        {...components.map((node) => <node.render />).toArray()}
+        {...components}
         {
           /* <Joint
           pos={joint}

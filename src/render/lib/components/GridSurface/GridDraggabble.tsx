@@ -8,7 +8,6 @@ import {
 } from "preact/hooks";
 import style from "./GirdSurface.module.css";
 import { Lumber } from "@/lib/log/Lumber";
-import { useControlledState } from "@/lib/hooks";
 import { Point } from "@/lib/types/Geometry";
 import { OffsetContext } from "@/lib/components/GridSurface";
 import { HTMLAttributes, memo, PropsWithChildren } from "preact/compat";
@@ -16,8 +15,7 @@ import { HTMLAttributes, memo, PropsWithChildren } from "preact/compat";
 type Props = {
   width: number;
   height: number;
-  x: number;
-  y: number;
+  pos: Point;
   onDragStart?: (pos: Point) => void;
   onDrag?: (pos: Point) => void;
   onDragStop?: (pos: Point) => void;
@@ -34,12 +32,11 @@ export const GridDraggable = memo((
   {
     width,
     height,
-    x,
-    y,
     children,
     onDragStart,
     onDrag,
     onDragStop,
+    pos,
     ...props
   }: PropsWithChildren<PropsWithAttributes>,
 ) => {
@@ -48,11 +45,11 @@ export const GridDraggable = memo((
 
   //this lets the component update its own position
   //position changes from the parent will still cause updates
-  const [pos, setPos, posAtom] = useControlledState(
-    (x, y) => ({ x, y }),
-    [x, y],
-    onDrag,
-  );
+  // const [pos, setPos, posAtom] = useControlledState(
+  //   (pos) => ({...pos}),
+  //   [props.pos],
+  //   onDrag,
+  // );
   const [grabOffset, setGrabOffset] = useState<Point>();
 
   const ref = useRef<HTMLDivElement>(null);
@@ -78,7 +75,7 @@ export const GridDraggable = memo((
     //   if (oldPos.x == pos.x && oldPos.y == pos.y) return oldPos;
     //   return pos;
     // });
-    setPos(pos);
+    onDrag?.(pos);
   }, [grabOffset, offsetAtom]);
 
   useEffect(() => {
@@ -93,12 +90,12 @@ export const GridDraggable = memo((
       document.body.style.cursor = "";
       setGrabOffset(undefined);
       controller.abort();
-      onDragStop?.(posAtom.get());
+      onDragStop?.(pos);
     }, { once: true, signal });
     document.body.style.cursor = "grabbing"; //! todo overwrite other cursors
 
     return () => controller.abort();
-  }, [grabOffset, posAtom, onDragStop, movehandler]);
+  }, [grabOffset, pos, onDragStop, movehandler]);
 
   return (
     <div
