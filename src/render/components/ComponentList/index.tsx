@@ -7,6 +7,7 @@ import { Lumber } from '@/lib/log/Lumber';
 import { createAtom } from '@xstate/store';
 import { h } from 'preact';
 import { memo } from 'preact/compat';
+import { createPos } from '@/render/lib/Position';
 
 export const ComponentList = memo(() => {
     Lumber.log(Lumber.RENDER, 'COMPONENT LIST RENDER');
@@ -21,7 +22,7 @@ export const ComponentList = memo(() => {
                     ghostElement={() => (
                         <Gate
                             pos={useConstant(createAtom({ x: 0, y: 0 }))}
-                            inputs={2}
+                            inputs={[createPos(), createPos()]}
                             op={op}
                         >
                         </Gate>
@@ -30,7 +31,7 @@ export const ComponentList = memo(() => {
                     {op.toUpperCase()}
                     <Gate
                         pos={useConstant(createAtom({ x: 0, y: 0 }))}
-                        inputs={2}
+                        inputs={[createPos(), createPos()]}
                         op={op}
                     >
                     </Gate>

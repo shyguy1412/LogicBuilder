@@ -1,6 +1,11 @@
 import { createStore } from '@xstate/store';
 import { useSelector } from '@xstate/store/react';
-import { AnyComponent, VNode } from 'preact';
+import { AnyComponent, FunctionComponent, VNode } from 'preact';
+
+export const addNode = <
+    T extends AnyComponent<any>,
+    P extends T extends AnyComponent<infer P> ? P : never,
+>(node: [T, P]) => WorkspaceStore.trigger.addNode({ node });
 
 const WorkspaceStore = createStore({
     context: {
@@ -30,4 +35,3 @@ const WorkspaceStore = createStore({
 
 export const useComponentGraph = () =>
     useSelector(WorkspaceStore, (state) => state.context.componentGraph);
-export const useWorkspaceActions = () => WorkspaceStore.trigger;

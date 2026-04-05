@@ -7,8 +7,9 @@ import { GridSurface } from '@/render/components/GridSurface';
 import { DropTarget } from '@/lib/components/DragNDrop';
 import { DROP_GROUPS } from '@/render/components/App';
 import { Point } from '@/lib/types/Geometry';
-import { useComponentGraph, useWorkspaceActions } from '@/render/store/workspace';
 import { Gate } from '@/render/components/CircuitComponents/Gate';
+import { addNode, useComponentGraph } from '@/render/store/workspace';
+import { createPos } from '@/render/lib/Position';
 
 // useWorkspaceActions().addNode({
 //   node: new GateNode(createAtom({ x: 9, y: 9 }), "and"),
@@ -36,16 +37,6 @@ import { Gate } from '@/render/components/CircuitComponents/Gate';
 
 // useWorkspaceActions().addNode({
 //   node: new WireNode(
-//     createAtom({ x: 5, y: 2 }),
-//     createAtom({
-//       x: 8,
-//       y: 3,
-//     }),
-//   ),
-// });
-
-// useWorkspaceActions().addNode({
-//   node: new WireNode(
 //     createAtom({ x: 5, y: 4 }),
 //     createAtom({
 //       x: 8,
@@ -55,14 +46,23 @@ import { Gate } from '@/render/components/CircuitComponents/Gate';
 // });
 
 // useWorkspaceActions().addNode({
-//   node: new WireNode(
-//     createAtom({ x: 15, y: 4 }),
-//     createAtom({
-//       x: 18,
-//       y: 5,
-//     }),
-//   ),
+//     node: new WireNode(
+//         createAtom({ x: 15, y: 4 }),
+//         createAtom({
+//             x: 18,
+//             y: 5,
+//         }),
+//     ),
 // });
+
+addNode([
+    Gate,
+    {
+        pos: createAtom({ x: 15, y: 4 }),
+        inputs: [createPos(), createPos()],
+        op: 'and',
+    },
+]);
 
 export function Workspace() {
     Lumber.log(Lumber.RENDER, 'WORKSPACE RENDER');
@@ -90,7 +90,6 @@ export function Workspace() {
             snapGhostIntoGrid(
                 ghost,
                 ev.currentTarget.firstElementChild!,
-                offset,
                 positionOnGrid,
             );
 
@@ -113,20 +112,11 @@ export function Workspace() {
     const onDrop = useCallback(
         ((e, data: any) => {
             // Lumber.log("EVENT", `COMPONENT DROPPED AT X:${data.x};Y:${data.y}`, data);
-            const { addNode } = useWorkspaceActions();
-
-            addNode({
-                node: [Gate as AnyComponent, {
-                    inputs: 2,
-                    op: data.op,
-                    pos: createAtom({ x: data.x, y: data.y }),
-                }],
-                //   <Gate
-                //     inputs={2}
-                //     op={data.op}
-                //     pos={createAtom({ x: data.x, y: data.y })}
-                //   />
-            });
+            addNode([Gate, {
+                inputs: [createPos(), createPos()],
+                op: data.op,
+                pos: createAtom({ x: data.x, y: data.y }),
+            }]);
         }) satisfies DropTarget.Props['onDrop'],
         [],
     );
@@ -189,7 +179,6 @@ function calculatePositionOnGrid(
 function snapGhostIntoGrid(
     ghost: HTMLDivElement,
     grid: Element,
-    offset: Point,
     position: Point,
 ) {
     if (ghost.parentElement != grid) {

@@ -3,9 +3,10 @@ import { GridDraggable } from '@/render/components/GridSurface';
 import { useAtom } from '@/lib/hooks';
 import { Lumber } from '@/lib/log/Lumber';
 import { Point } from '@/lib/types/Geometry';
-import { Atom } from '@xstate/store';
+import { Atom, createAtom } from '@xstate/store';
 import { h } from 'preact';
-import { memo, useMemo } from 'preact/compat';
+import { memo, useEffect, useMemo } from 'preact/compat';
+import { Pin } from '@/render/components/CircuitComponents/Pin';
 
 export const LogicOperation = {
     NOT: 'not',
@@ -34,7 +35,8 @@ export const LogicSymbol = {
 type Props = {
     pos: Atom<Point>;
     op: LogicOperation;
-    inputs: number;
+    inputs: Atom<Point>[];
+    // output: Atom<Point>;
     onDragStart?: GridDraggable.Props['onDragStart'];
 };
 export namespace Gate {
@@ -44,6 +46,7 @@ export namespace Gate {
 export const Gate = memo(({
     // inputs,
     // output,
+    inputs,
     onDragStart,
     ...props
 }: Props) => {
@@ -52,7 +55,21 @@ export const Gate = memo(({
     //this lets a Gate manage it position internally.
     //Position updates from the parent take precedence but dont need to happen
     //for a component to move
-    const [pos, setPos] = useAtom(props.pos);
+    const [pos, _setPos] = useAtom(props.pos);
+    const setPos = (newPos: Point) =>
+        _setPos((oldPos) => {
+            const posDelta = {
+                x: oldPos.x - newPos.x,
+                y: oldPos.y - newPos.y,
+            };
+            for (const pin of inputs) {
+                pin.set((oldPos) => ({
+                    x: oldPos.x - posDelta.x,
+                    y: oldPos.y - posDelta.y,
+                }));
+            }
+            return newPos;
+        });
 
     const [symbol, negated] = useMemo(
         () => [
@@ -62,24 +79,41 @@ export const Gate = memo(({
         [props.op],
     );
 
+    useEffect(() => {
+        for (const [i, pin] of inputs.entries()) {
+            pin.set(() => ({
+                x: pos.x,
+                y: pos.y + i,
+            }));
+        }
+    }, [inputs]);
+
+    const Pins = () => {
+        return inputs.map((pinPosAtom, i) => () => {
+            const [pinPos] = useAtom(pinPosAtom);
+
+            return <Pin
+                // data-snap-to-grid
+                data-pos-x={pinPos.x - pos.x}
+                data-pos-y={pinPos.y - pos.y + i + 1}
+                key={i}
+            />;
+        }).map((Pin) => <Pin />);
+    };
+
     return (
         <Lumber.Supress channel={Lumber.RENDER}>
             <GridDraggable
+                class={style.gate}
                 width={3}
                 height={4}
                 pos={pos}
                 onDragStart={onDragStart}
                 onDrag={setPos}
             >
-                <div
-                    class={style.gate}
-                >
-                    <div class={style.inputs}>
-                        {/* {inputs.map((_, i) => <div></div>)} */}
-                    </div>
-                    <span class={style.symbol} style-operation-symbol>{symbol}</span>
-                    <div style-not={negated ? '' : undefined} class={style.output} />
-                </div>
+                <Pins></Pins>
+                <span class={style.symbol} style-operation-symbol>{symbol}</span>
+                {/* <Pin style-not={negated ? '' : undefined} class={style.output} /> */}
             </GridDraggable>
         </Lumber.Supress>
     );

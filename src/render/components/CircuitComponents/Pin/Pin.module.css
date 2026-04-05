@@ -1,1 +1,23 @@
+.pin {
+    cursor: copy;
+    box-sizing: border-box;
 
+    position: absolute;
+
+    width: 0.5em;
+    height: 0.5em;
+
+    border-radius: 100%;
+
+    background-color: var(--clr-surface-dark-a0);
+    border: var(--border-width) solid currentColor;
+
+    transform: translate(-50%, -50%);
+
+    left: calc(attr(data-pos-x em) - var(--border-width));
+    top: calc(attr(data-pos-y em) - var(--border-width));
+}
+
+.pin[style-not] {
+    background-color: var(--clr-surface-light-a0);
+}
