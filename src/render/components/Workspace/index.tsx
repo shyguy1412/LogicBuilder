@@ -1,14 +1,14 @@
-import style from "./Workspace.module.css";
-import { h } from "preact";
-import { useCallback, useMemo, useState } from "preact/hooks";
-import { createAtom } from "@xstate/store";
-import { Lumber } from "@/lib/log/Lumber";
-import { GridSurface } from "@/lib/components/GridSurface";
-import { DropTarget } from "@/lib/components/DragNDrop";
-import { DROP_GROUPS } from "@/components/App";
-import { Point } from "@/lib/types/Geometry";
-import { useComponentGraph, useWorkspaceActions } from "@/store/workspace";
-import { Gate } from "@/components/circuit-components/Gate";
+import style from './Workspace.module.css';
+import { h } from 'preact';
+import { useCallback, useMemo, useState } from 'preact/hooks';
+import { createAtom } from '@xstate/store';
+import { Lumber } from '@/lib/log/Lumber';
+import { GridSurface } from '@/lib/components/GridSurface';
+import { DropTarget } from '@/lib/components/DragNDrop';
+import { DROP_GROUPS } from '@/components/App';
+import { Point } from '@/lib/types/Geometry';
+import { useComponentGraph, useWorkspaceActions } from '@/store/workspace';
+import { Gate } from '@/components/circuit-components/Gate';
 
 // useWorkspaceActions().addNode({
 //   node: new GateNode(createAtom({ x: 9, y: 9 }), "and"),
@@ -65,127 +65,132 @@ import { Gate } from "@/components/circuit-components/Gate";
 // });
 
 export function Workspace() {
-  Lumber.log(Lumber.RENDER, "WORKSPACE RENDER");
+    Lumber.log(Lumber.RENDER, 'WORKSPACE RENDER');
 
-  const offsetStore = useMemo(() => createAtom({ x: 0, y: 0 }), []);
-  const offset = offsetStore.get();
+    const offsetStore = useMemo(() => createAtom({ x: 0, y: 0 }), []);
+    const offset = offsetStore.get();
 
-  const [zoom, setZoom] = useState(1);
+    const [zoom, setZoom] = useState(1);
 
-  const components = useComponentGraph().values().toArray();
+    const components = useComponentGraph().values().toArray();
 
-  const onDragOver = useCallback(
-    ((ev, data, ghost) => {
-      if (!ghost) return;
-      const offset = offsetStore.get();
+    const onDragOver = useCallback(
+        ((ev, data, ghost) => {
+            if (!ghost) {
+                return;
+            }
+            const offset = offsetStore.get();
 
-      const positionOnGrid = calculatePositionOnGrid(
-        ghost,
-        ev.currentTarget.firstElementChild!,
-        offset,
-      );
+            const positionOnGrid = calculatePositionOnGrid(
+                ghost,
+                ev.currentTarget.firstElementChild!,
+                offset,
+            );
 
-      snapGhostIntoGrid(
-        ghost,
-        ev.currentTarget.firstElementChild!,
-        offset,
-        positionOnGrid,
-      );
+            snapGhostIntoGrid(
+                ghost,
+                ev.currentTarget.firstElementChild!,
+                offset,
+                positionOnGrid,
+            );
 
-      data.x = positionOnGrid.x;
-      data.y = positionOnGrid.y;
-    }) satisfies DropTarget.Props["onDragOver"],
-    [offsetStore],
-  );
+            data.x = positionOnGrid.x;
+            data.y = positionOnGrid.y;
+        }) satisfies DropTarget.Props['onDragOver'],
+        [offsetStore],
+    );
 
-  const onDragLeave = useCallback(
-    ((_event, _data, ghost) => {
-      if (!ghost) return;
-      document.body.append(ghost);
-    }) satisfies DropTarget.Props["onDragLeave"],
-    [],
-  );
+    const onDragLeave = useCallback(
+        ((_event, _data, ghost) => {
+            if (!ghost) {
+                return;
+            }
+            document.body.append(ghost);
+        }) satisfies DropTarget.Props['onDragLeave'],
+        [],
+    );
 
-  const onDrop = useCallback(
-    ((e, data: any) => {
-      // Lumber.log("EVENT", `COMPONENT DROPPED AT X:${data.x};Y:${data.y}`, data);
-      const { addNode } = useWorkspaceActions();
+    const onDrop = useCallback(
+        ((e, data: any) => {
+            // Lumber.log("EVENT", `COMPONENT DROPPED AT X:${data.x};Y:${data.y}`, data);
+            const { addNode } = useWorkspaceActions();
 
-      // addNode({
-      //   node: <Gate
-      //     inputs={2}
-      //     op={data.op}
-      //     pos={createAtom({ x: data.x, y: data.y })}
-      //   />
-      // });
-    }) satisfies DropTarget.Props["onDrop"],
-    [],
-  );
+            // addNode({
+            //   node: <Gate
+            //     inputs={2}
+            //     op={data.op}
+            //     pos={createAtom({ x: data.x, y: data.y })}
+            //   />
+            // });
+        }) satisfies DropTarget.Props['onDrop'],
+        [],
+    );
 
-  console.log(components);
-  
+    console.log(components);
 
-  return (
-    <DropTarget
-      class={style.workspace}
-      accept={DROP_GROUPS.CIRCUIT_COMPONENT}
-      onDragOver={onDragOver}
-      onDragLeave={onDragLeave}
-      onDrop={onDrop}
-    >
-      <GridSurface
-        zoom={zoom}
-        minZoom={0.35}
-        maxZoom={450}
-        zoomSpeed={0.06}
-        offsetX={offset.x}
-        offsetY={offset.y}
-        onOffsetUpdate={(o) => offsetStore.set(o)}
-      >
-        {...components}
-        {
-          /* <Joint
+    return (
+        <DropTarget
+            class={style.workspace}
+            accept={DROP_GROUPS.CIRCUIT_COMPONENT}
+            onDragOver={onDragOver}
+            onDragLeave={onDragLeave}
+            onDrop={onDrop}
+        >
+            <GridSurface
+                zoom={zoom}
+                minZoom={0.35}
+                maxZoom={450}
+                zoomSpeed={0.06}
+                offsetX={offset.x}
+                offsetY={offset.y}
+                onOffsetUpdate={(o) => offsetStore.set(o)}
+            >
+                {...components}
+                {
+                    /* <Joint
           pos={joint}
         />
         {...wires} */
-        }
-      </GridSurface>
-    </DropTarget>
-  );
+                }
+            </GridSurface>
+        </DropTarget>
+    );
 }
 
 function calculatePositionOnGrid(
-  ghost: HTMLDivElement,
-  grid: Element,
-  offset: Point,
+    ghost: HTMLDivElement,
+    grid: Element,
+    offset: Point,
 ) {
-  const ghostRect = ghost.getBoundingClientRect();
-  const boundingRect = grid.getBoundingClientRect();
-  const em = +getComputedStyle(grid).fontSize.slice(0, -2);
+    const ghostRect = ghost.getBoundingClientRect();
+    const boundingRect = grid.getBoundingClientRect();
+    const em = +getComputedStyle(grid).fontSize.slice(0, -2);
 
-  //If the ghost is a child of the grid we need to compensate for client offset twice
-  //once to adjust for the offset of the grid itself and once for the ghost inside the grid
-  if (ghost.parentElement == grid) {
-    boundingRect.x *= 2;
-    boundingRect.y *= 2;
-  }
+    //If the ghost is a child of the grid we need to compensate for client offset twice
+    //once to adjust for the offset of the grid itself and once for the ghost inside the grid
+    if (ghost.parentElement == grid) {
+        boundingRect.x *= 2;
+        boundingRect.y *= 2;
+    }
 
-  const posOnGrid = {
-    x: Math.round((ghostRect.x - boundingRect.x - offset.x) / em),
-    y: Math.round((ghostRect.y - boundingRect.y - offset.y) / em),
-  };
+    const posOnGrid = {
+        x: Math.round((ghostRect.x - boundingRect.x - offset.x) / em),
+        y: Math.round((ghostRect.y - boundingRect.y - offset.y) / em),
+    };
 
-  return posOnGrid;
+    return posOnGrid;
 }
 
 function snapGhostIntoGrid(
-  ghost: HTMLDivElement,
-  grid: Element,
-  offset: Point,
-  position: Point,
+    ghost: HTMLDivElement,
+    grid: Element,
+    offset: Point,
+    position: Point,
 ) {
-  if (ghost.parentElement != grid) grid.append(ghost);
-  const em = +getComputedStyle(grid).fontSize.slice(0, -2);
-  ghost.setAttribute("data-pos-x", (position.x * em) + "");
-  ghost.setAttribute("data-pos-y", (position.y * em) + "");
+    if (ghost.parentElement != grid) {
+        grid.append(ghost);
+    }
+    const em = +getComputedStyle(grid).fontSize.slice(0, -2);
+    ghost.setAttribute('data-pos-x', (position.x * em) + '');
+    ghost.setAttribute('data-pos-y', (position.y * em) + '');
 }

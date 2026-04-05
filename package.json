@@ -1,48 +1,50 @@
 {
-  "name": "electron-esbuild-template",
-  "version": "2.0.0",
-  "description": "Template for electron apps with esbuild",
-  "main": "build/main.js",
-  "scripts": {
-    "watch": "node build.mjs --watch --port 3000 --host 127.0.0.1",
-    "dev": "concurrently -k \"npm:watch\" \"wait-on http://127.0.0.1:3000 && DEV=true nodemon -w build/main.js -w build/preload.js --exec electron build/main.js\"",
-    "start": "electron ./build/main.js",
-    "build": "node build.mjs && electron-builder",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "build": {
-    "files": [
-      "./build/**/*"
-    ]
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/shyguy1412/electron-esbuild-template.git"
-  },
-  "author": "Shy",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/shyguy1412/electron-esbuild-template/issues"
-  },
-  "homepage": "https://github.com/shyguy1412/electron-esbuild-template#readme",
-  "devDependencies": {
-    "concurrently": "^9.1.2",
-    "electron": "^36.1.0",
-    "electron-builder": "^26.0.12",
-    "esbuild": "^0.25.3",
-    "nodemon": "^3.1.10",
-    "typescript": "^5.8.3",
-    "typescript-plugin-css-modules": "^5.1.0",
-    "wait-on": "^8.0.3"
-  },
-  "dependencies": {
-    "@fontsource-variable/inter": "^5.2.5",
-    "@fontsource-variable/roboto": "^5.2.5",
-    "@xstate/react": "^5.0.3",
-    "@xstate/store": "^3.5.1",
-    "normalize.css": "^8.0.1",
-    "preact": "^10.26.5",
-    "react-icons": "^5.5.0",
-    "xstate": "^5.19.2"
-  }
+    "name": "electron-esbuild-template",
+    "version": "2.0.0",
+    "description": "Template for electron apps with esbuild",
+    "main": "build/main.js",
+    "scripts": {
+        "watch": "node build.mjs --watch --port 3000 --host 127.0.0.1",
+        "dev": "concurrently -k \"npm:watch\" \"wait-on http://127.0.0.1:3000 && DEV=true nodemon -w build/main.js -w build/preload.js --exec electron build/main.js\"  \"npm:cargo-watch\"",
+        "start": "electron ./build/main.js",
+        "build": "npm run cargo-build && node build.mjs && electron-builder",
+        "cargo-watch": "nodemon -w ./src/core -i ./src/core -e rs --exec npm run cargo-build",
+        "cargo-build": "TS_DECL_GEN=true OUTFILE=src/core/index.d.ts cargo build --message-format=json-render-diagnostics > cargo.log",
+        "postcargo-build": "neon dist -o src/core/index.node --name app_core < cargo.log"
+    },
+    "build": {
+        "files": [
+            "./build/**/*"
+        ]
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/shyguy1412/electron-esbuild-template.git"
+    },
+    "author": "Shy",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/shyguy1412/electron-esbuild-template/issues"
+    },
+    "homepage": "https://github.com/shyguy1412/electron-esbuild-template#readme",
+    "devDependencies": {
+        "concurrently": "^9.1.2",
+        "electron": "^36.1.0",
+        "electron-builder": "^26.0.12",
+        "esbuild": "^0.25.3",
+        "nodemon": "^3.1.10",
+        "typescript": "^5.8.3",
+        "typescript-plugin-css-modules": "^5.1.0",
+        "wait-on": "^8.0.3"
+    },
+    "dependencies": {
+        "@fontsource-variable/inter": "^5.2.5",
+        "@fontsource-variable/roboto": "^5.2.5",
+        "@xstate/react": "^5.0.3",
+        "@xstate/store": "^3.5.1",
+        "normalize.css": "^8.0.1",
+        "preact": "^10.26.5",
+        "react-icons": "^5.5.0",
+        "xstate": "^5.19.2"
+    }
 }

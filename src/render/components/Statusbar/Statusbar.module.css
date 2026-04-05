@@ -1,6 +1,6 @@
 .statusbar {
-  height: 1.6em;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    height: 1.6em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

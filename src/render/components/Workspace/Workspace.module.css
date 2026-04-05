@@ -1,14 +1,14 @@
 .workspace[style-drop-target] {
-  width: 100%;
-  height: 100%;
-  z-index: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
 }
 
 .workspace :not([style-wire]) {
-  z-index: 1;
+    z-index: 1;
 }
 
 .workspace [style-grid-surface] {
-  color: var(--clr-surface-a40);
-  --dot-size: max(1px, 0.0575em);
+    color: var(--clr-surface-a40);
+    --dot-size: max(1px, 0.0575em);
 }
