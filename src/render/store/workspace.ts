@@ -7,13 +7,13 @@ const WorkspaceStore = createStore({
         componentGraph: new Set<[AnyComponent, any]>(),
     },
     on: {
-        // addNode(context, event: { node: VNode; }) {
-        //   return {
-        //     componentGraph: new Set(context.componentGraph).add(
-        //       event.node,
-        //     ),
-        //   };
-        // },
+        addNode(context, event: { node: [AnyComponent, any] }) {
+            return {
+                componentGraph: new Set(context.componentGraph).add(
+                    event.node,
+                ),
+            };
+        },
         //   removeNode: (context, event: { node: GraphNode; }) => ({
         //     componentGraph: (context.componentGraph.delete(
         //       event.node,

@@ -1,6 +1,6 @@
 import style from './ComponentList.module.css';
-import { DROP_GROUPS } from '@/components/App';
-import { Gate, LogicOperation } from '@/components/circuit-components/Gate';
+import { DROP_GROUPS } from '@/render/components/App';
+import { Gate, LogicOperation } from '@/render/components/circuit-components/Gate';
 import { DragTarget } from '@/lib/components/DragNDrop';
 import { useConstant } from '@/lib/hooks';
 import { Lumber } from '@/lib/log/Lumber';
@@ -21,7 +21,7 @@ export const ComponentList = memo(() => {
                     ghostElement={() => (
                         <Gate
                             pos={useConstant(createAtom({ x: 0, y: 0 }))}
-                            inputs={[undefined, undefined]}
+                            inputs={2}
                             op={op}
                         >
                         </Gate>
@@ -30,7 +30,7 @@ export const ComponentList = memo(() => {
                     {op.toUpperCase()}
                     <Gate
                         pos={useConstant(createAtom({ x: 0, y: 0 }))}
-                        inputs={[undefined, undefined]}
+                        inputs={2}
                         op={op}
                     >
                     </Gate>

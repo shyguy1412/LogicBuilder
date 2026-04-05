@@ -1,5 +1,5 @@
 import style from './Gate.module.css';
-import { GridDraggable } from '@/lib/components/GridSurface';
+import { GridDraggable } from '@/render/components/GridSurface';
 import { useAtom } from '@/lib/hooks';
 import { Lumber } from '@/lib/log/Lumber';
 import { Point } from '@/lib/types/Geometry';

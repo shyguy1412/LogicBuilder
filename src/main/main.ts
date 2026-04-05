@@ -1,5 +1,7 @@
+import '@/lib/electron/main';
 import * as path from 'path';
-import { app, BrowserWindow, ipcMain, Menu, MenuItem, session } from 'electron';
+import { app, BrowserWindow, Menu, MenuItem } from 'electron';
+import { bridge } from '@/lib/electron/ModuleBridge';
 
 //TEMP
 const i18n = {
@@ -21,7 +23,8 @@ function createMenu(): Menu {
                     label: i18n.t('Toggle Developer Tools'),
                     accelerator: 'ctrl+shift+i',
                     click: () => {
-                        BrowserWindow.getFocusedWindow()!.webContents.toggleDevTools();
+                        BrowserWindow.getFocusedWindow()!.webContents
+                            .toggleDevTools();
                     },
                 },
                 {
@@ -72,55 +75,9 @@ function createWindow() {
     return mainWindow;
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-
 app.whenReady().then(async () => {
     Menu.setApplicationMenu(createMenu());
     createWindow();
-
-    session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
-        callback({
-            responseHeaders: {
-                ...details.responseHeaders,
-                'Content-Security-Policy': [
-                    `default-src 'self' ${process.env.DEV ? "'unsafe-inline'" : ''}`,
-                ],
-            },
-        });
-    });
 });
 
 // nativeTheme.themeSource = "light";
-
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
-app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-        app.quit();
-    }
-});
-
-ipcMain.handle('close', () => {
-    app.quit();
-});
-
-ipcMain.handle('maximize', () => {
-    const win = BrowserWindow.getFocusedWindow();
-
-    if (win?.isMaximized()) {
-        win?.unmaximize();
-    } else {
-        win?.maximize();
-    }
-});
-
-ipcMain.handle('is-maximized', (e) => {
-    return BrowserWindow.getFocusedWindow()?.isMaximized();
-});
-
-ipcMain.handle('minimize', () => {
-    BrowserWindow.getFocusedWindow()?.minimize();
-});

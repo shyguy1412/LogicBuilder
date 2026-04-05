@@ -1,6 +1,6 @@
 import { useAtom, useConstant } from '@/lib/hooks';
 import style from './Wire.module.css';
-import { GridDraggable } from '@/lib/components/GridSurface';
+import { GridDraggable } from '@/render/components/GridSurface';
 import { Point } from '@/lib/types/Geometry';
 import { Fragment, h } from 'preact';
 import { memo, useCallback, useMemo } from 'preact/compat';

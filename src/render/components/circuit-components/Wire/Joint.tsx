@@ -1,6 +1,6 @@
-import { GraphNode } from '@/components/circuit-components/GraphNode';
+// import { GraphNode } from '@/render/components/circuit-components/GraphNode';
 import style from './Wire.module.css';
-import { GridDraggable } from '@/lib/components/GridSurface';
+import { GridDraggable } from '@/render/components/GridSurface';
 import { useAtom } from '@/lib/hooks';
 import { Point } from '@/lib/types/Geometry';
 import { Atom } from '@xstate/store';
@@ -20,7 +20,7 @@ export const Joint = memo(({ ...props }: Props) => {
         <GridDraggable
             width={1}
             height={1}
-            {...pos}
+            pos={pos}
             style-wire
             style-wire-joint
             class={style.joint}
@@ -29,8 +29,8 @@ export const Joint = memo(({ ...props }: Props) => {
     );
 });
 
-export class JointNode extends GraphNode {
-    render(): h.JSX.Element {
-        return <Joint pos={this.pos} />;
-    }
-}
+// export class JointNode extends GraphNode {
+//     render(): h.JSX.Element {
+//         return <Joint pos={this.pos} />;
+//     }
+// }

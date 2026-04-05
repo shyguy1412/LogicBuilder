@@ -1,13 +1,13 @@
 import { h } from 'preact';
 import style from './App.module.css';
 import { Menu, Sidebar } from '@/lib/components/Sidebar';
-import { Statusbar } from '@/components/Statusbar';
-import { createRouter, useRouter } from '@/lib/Router';
+import { Statusbar } from '@/render/components/Statusbar';
+import { createRouter, useRouter, useView } from '@/lib/Router';
 import { Titlebar } from '@/lib/components/Titlebar';
 import { PiCircuitry, PiCpu, PiFile, PiGear } from 'react-icons/pi';
 import { Lumber } from '@/lib/log/Lumber';
-import { Workspace } from '@/components/Workspace';
-import { ComponentList } from '@/components/ComponentList';
+import { Workspace } from '@/render/components/Workspace';
+import { ComponentList } from '@/render/components/ComponentList';
 import { useConstant } from '@/lib/hooks';
 
 export const Router = createRouter({
@@ -41,7 +41,7 @@ Lumber.blockChannel(Lumber.RENDER);
 Lumber.blockChannel(Lumber.HOOK);
 
 export function App() {
-    const { View } = useRouter(Router);
+    const View = useView(Router);
 
     Lumber.log(Lumber.RENDER, 'APP RENDER');
 

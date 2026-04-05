@@ -14,6 +14,8 @@ const createMainContext = async () =>
         ],
         outdir: './build',
         outbase: './src/main',
+        bundle: true,
+        packages: 'external',
         format: 'cjs',
         platform: 'node',
         logLevel: 'info',
@@ -55,6 +57,7 @@ const createRenderContext = async () =>
         },
         // minify: !WATCH,
         logLevel: 'info',
+        sourcemap: true,
     });
 
 const renderCtx = await createRenderContext();

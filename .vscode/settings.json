@@ -2,5 +2,7 @@
     "typescript.tsdk": "node_modules/typescript/lib",
     "typescript.enablePromptUseWorkspaceTsdk": true,
     "deno.enable": true,
-    "deno.disablePaths": ["."]
+    "deno.disablePaths": ["."],
+    "deno.config": "./deno.jsonc",
+    "editor.formatOnSave": true
 }

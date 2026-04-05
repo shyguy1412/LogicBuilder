@@ -1,14 +1,14 @@
 import style from './Workspace.module.css';
-import { h } from 'preact';
+import { AnyComponent, h } from 'preact';
 import { useCallback, useMemo, useState } from 'preact/hooks';
 import { createAtom } from '@xstate/store';
 import { Lumber } from '@/lib/log/Lumber';
-import { GridSurface } from '@/lib/components/GridSurface';
+import { GridSurface } from '@/render/components/GridSurface';
 import { DropTarget } from '@/lib/components/DragNDrop';
-import { DROP_GROUPS } from '@/components/App';
+import { DROP_GROUPS } from '@/render/components/App';
 import { Point } from '@/lib/types/Geometry';
-import { useComponentGraph, useWorkspaceActions } from '@/store/workspace';
-import { Gate } from '@/components/circuit-components/Gate';
+import { useComponentGraph, useWorkspaceActions } from '@/render/store/workspace';
+import { Gate } from '@/render/components/circuit-components/Gate';
 
 // useWorkspaceActions().addNode({
 //   node: new GateNode(createAtom({ x: 9, y: 9 }), "and"),
@@ -115,13 +115,18 @@ export function Workspace() {
             // Lumber.log("EVENT", `COMPONENT DROPPED AT X:${data.x};Y:${data.y}`, data);
             const { addNode } = useWorkspaceActions();
 
-            // addNode({
-            //   node: <Gate
-            //     inputs={2}
-            //     op={data.op}
-            //     pos={createAtom({ x: data.x, y: data.y })}
-            //   />
-            // });
+            addNode({
+                node: [Gate as AnyComponent, {
+                    inputs: 2,
+                    op: data.op,
+                    pos: createAtom({ x: data.x, y: data.y }),
+                }],
+                //   <Gate
+                //     inputs={2}
+                //     op={data.op}
+                //     pos={createAtom({ x: data.x, y: data.y })}
+                //   />
+            });
         }) satisfies DropTarget.Props['onDrop'],
         [],
     );
@@ -145,7 +150,7 @@ export function Workspace() {
                 offsetY={offset.y}
                 onOffsetUpdate={(o) => offsetStore.set(o)}
             >
-                {...components}
+                {...components.map(([C, p], i) => <C key={i} {...p}></C>)}
                 {
                     /* <Joint
           pos={joint}

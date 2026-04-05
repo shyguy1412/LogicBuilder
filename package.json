@@ -7,10 +7,11 @@
         "watch": "node build.mjs --watch --port 3000 --host 127.0.0.1",
         "dev": "concurrently -k \"npm:watch\" \"wait-on http://127.0.0.1:3000 && DEV=true nodemon -w build/main.js -w build/preload.js --exec electron build/main.js\"  \"npm:cargo-watch\"",
         "start": "electron ./build/main.js",
+        "typecheck": "tsc --noEmit -p ./tsconfig.json",
         "build": "npm run cargo-build && node build.mjs && electron-builder",
         "cargo-watch": "nodemon -w ./src/core -i ./src/core -e rs --exec npm run cargo-build",
         "cargo-build": "TS_DECL_GEN=true OUTFILE=src/core/index.d.ts cargo build --message-format=json-render-diagnostics > cargo.log",
-        "postcargo-build": "neon dist -o src/core/index.node --name app_core < cargo.log"
+        "postcargo-build": "neon dist -o src/core/index.node --name lce-ts-bindings < cargo.log"
     },
     "build": {
         "files": [
@@ -41,8 +42,8 @@
         "@fontsource-variable/inter": "^5.2.8",
         "@fontsource-variable/roboto": "^5.2.10",
         "@neon-rs/cli": "^0.2.6",
-        "@xstate/react": "^6.1.0",
         "@xstate/store": "^3.17.1",
+        "@xstate/store-react": "^1.0.1",
         "normalize.css": "^8.0.1",
         "preact": "^10.29.1",
         "react-icons": "^5.6.0",
