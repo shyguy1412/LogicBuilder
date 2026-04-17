@@ -2,12 +2,12 @@ use std::mem;
 
 use serde::Serialize;
 
-use crate::{Circuit, Pin, Signal};
+use crate::{Circuit, Connection, Signal};
 
 #[derive(Debug, Clone, Serialize)]
 pub struct Chip {
     pub(crate) inputs: Box<[Signal]>,
-    pub(crate) connections: Box<[Pin]>,
+    pub(crate) connections: Box<[Connection]>,
     behavior: Behavior,
 }
 
@@ -25,7 +25,7 @@ impl Chip {
         }
     }
 
-    pub(crate) fn add_connection(&mut self, connection: Pin) {
+    pub(crate) fn add_connection(&mut self, connection: Connection) {
         let mut vec = mem::take(&mut self.connections).into_vec();
         vec.push(connection);
         self.connections = vec.into_boxed_slice();
