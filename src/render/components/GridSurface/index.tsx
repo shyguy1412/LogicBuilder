@@ -1,8 +1,8 @@
 import style from './GirdSurface.module.css';
 
-import { memo, PropsWithChildren, TargetedEvent } from 'preact/compat';
+import { memo, PropsWithChildren } from 'preact/compat';
 import { useCallback, useRef } from 'preact/hooks';
-import { createContext, h } from 'preact';
+import { createContext, h, TargetedEvent } from 'preact';
 
 import { Lumber } from '@/lib/log/Lumber';
 import { useControlledState } from '@/lib/hooks';
@@ -102,7 +102,7 @@ export const GridSurface = memo((
                 return;
             }
             // if (event.button == 0 && !event.getModifierState("Control")) return;
-            if (event.button != 2) {
+            if (event.button != 0) {
                 return;
             }
             // if (event.button > 2) return;

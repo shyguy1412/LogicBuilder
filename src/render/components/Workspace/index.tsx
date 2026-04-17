@@ -7,9 +7,10 @@ import { GridSurface } from '@/render/components/GridSurface';
 import { DropTarget } from '@/lib/components/DragNDrop';
 import { DROP_GROUPS } from '@/render/components/App';
 import { Point } from '@/lib/types/Geometry';
-import { Gate } from '@/render/components/CircuitComponents/Gate';
-import { addNode, useComponentGraph } from '@/render/store/workspace';
+import { useChips } from '@/render/store/workspace';
 import { createPos } from '@/render/lib/Position';
+import { Chip } from '@/render/components/CircuitComponents/Chip';
+import { Wire } from '@/render/components/CircuitComponents/Wire';
 
 // useWorkspaceActions().addNode({
 //   node: new GateNode(createAtom({ x: 9, y: 9 }), "and"),
@@ -55,14 +56,66 @@ import { createPos } from '@/render/lib/Position';
 //     ),
 // });
 
-addNode([
-    Gate,
-    {
-        pos: createAtom({ x: 15, y: 4 }),
-        inputs: [createPos(), createPos()],
-        op: 'and',
-    },
-]);
+// addNode([
+//     Gate,
+//     {
+//         pos: createAtom({ x: 15, y: 4 }),
+//         inputs: [createPos()],
+//         op: 'and',
+//     },
+// ]);
+
+// addNode([
+//     Gate,
+//     {
+//         pos: createAtom({ x: 15, y: 8 }),
+//         inputs: [createPos(), createPos()],
+//         op: 'and',
+//     },
+// ]);
+
+// addNode([
+//     Gate,
+//     {
+//         pos: createAtom({ x: 15, y: 12 }),
+//         inputs: [createPos(), createPos(), createPos()],
+//         op: 'and',
+//     },
+// ]);
+
+// addNode([
+//     Gate,
+//     {
+//         pos: createAtom({ x: 15, y: 16 }),
+//         inputs: [createPos(), createPos(), createPos(), createPos()],
+//         op: 'and',
+//     },
+// ]);
+
+// addNode([
+//     Gate,
+//     {
+//         pos: createAtom({ x: 15, y: 20 }),
+//         inputs: [createPos(), createPos(), createPos(), createPos(), createPos()],
+//         op: 'and',
+//     },
+// ]);
+
+// addNode([
+//     Gate,
+//     {
+//         pos: createAtom({ x: 15, y: 24 }),
+//         inputs: [
+//             createPos(),
+//             createPos(),
+//             createPos(),
+//             createPos(),
+//             createPos(),
+//             createPos(),
+//         ],
+//         op: 'and',
+//     },
+// ]);
 
 export function Workspace() {
     Lumber.log(Lumber.RENDER, 'WORKSPACE RENDER');
@@ -70,9 +123,9 @@ export function Workspace() {
     const offsetStore = useMemo(() => createAtom({ x: 0, y: 0 }), []);
     const offset = offsetStore.get();
 
-    const [zoom, setZoom] = useState(1);
+    const [zoom, setZoom] = useState(5);
 
-    const components = useComponentGraph().values().toArray();
+    const components = useChips();
 
     const onDragOver = useCallback(
         ((ev, data, ghost) => {
@@ -109,19 +162,17 @@ export function Workspace() {
         [],
     );
 
-    const onDrop = useCallback(
-        ((e, data: any) => {
-            // Lumber.log("EVENT", `COMPONENT DROPPED AT X:${data.x};Y:${data.y}`, data);
-            addNode([Gate, {
-                inputs: [createPos(), createPos()],
-                op: data.op,
-                pos: createAtom({ x: data.x, y: data.y }),
-            }]);
-        }) satisfies DropTarget.Props['onDrop'],
-        [],
-    );
-
-    console.log(components);
+    // const onDrop = useCallback(
+    //     ((e, data: any) => {
+    //         // Lumber.log("EVENT", `COMPONENT DROPPED AT X:${data.x};Y:${data.y}`, data);
+    //         addNode([Gate, {
+    //             inputs: [createPos(), createPos()],
+    //             op: data.op,
+    //             pos: createAtom({ x: data.x, y: data.y }),
+    //         }]);
+    //     }) satisfies DropTarget.Props['onDrop'],
+    //     [],
+    // );
 
     return (
         <DropTarget
@@ -129,7 +180,7 @@ export function Workspace() {
             accept={DROP_GROUPS.CIRCUIT_COMPONENT}
             onDragOver={onDragOver}
             onDragLeave={onDragLeave}
-            onDrop={onDrop}
+            // onDrop={onDrop}
         >
             <GridSurface
                 zoom={zoom}
@@ -140,13 +191,7 @@ export function Workspace() {
                 offsetY={offset.y}
                 onOffsetUpdate={(o) => offsetStore.set(o)}
             >
-                {...components.map(([C, p], i) => <C key={i} {...p}></C>)}
-                {
-                    /* <Joint
-          pos={joint}
-        />
-        {...wires} */
-                }
+                {...components.map((p, i) => <Chip id={i} key={i} {...p}></Chip>)}
             </GridSurface>
         </DropTarget>
     );

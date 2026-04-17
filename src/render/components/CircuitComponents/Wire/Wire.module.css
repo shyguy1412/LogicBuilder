@@ -1,20 +1,32 @@
 .wire {
-    content: '';
-    display: block;
     --thickness: 0.2em;
+
+    z-index: 1;
+
+    display: block;
+    position: absolute;
+
     width: calc(attr(data-wire-length em) + var(--thickness));
     height: max(1px, var(--thickness));
+
+    left: calc(attr(data-pos-x em) + var(--offset-x));
+    top: calc(attr(data-pos-y em) + var(--offset-y));
+
     background-color: var(--clr-foreground-a0);
     transform: translate(-50%, -50%) rotate(attr(data-wire-angle rad))
         translate(calc(50% + var(--thickness) * -0.5));
+
     border-radius: var(--thickness);
 }
 
 .handle {
     z-index: 2;
-    background-color: #ff000088;
     transform: translate(-50%, -50%) scale(66%);
     cursor: pointer;
+}
+
+[style-wire-from] {
+    background-color: #ff000088;
 }
 
 [style-wire-to] {

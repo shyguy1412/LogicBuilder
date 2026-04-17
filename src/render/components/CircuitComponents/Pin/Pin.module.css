@@ -2,7 +2,7 @@
     cursor: copy;
     box-sizing: border-box;
 
-    position: absolute;
+    position: relative;
 
     width: 0.5em;
     height: 0.5em;
@@ -12,10 +12,9 @@
     background-color: var(--clr-surface-dark-a0);
     border: var(--border-width) solid currentColor;
 
-    transform: translate(-50%, -50%);
+    margin-block: 0.25em;
 
-    left: calc(attr(data-pos-x em) - var(--border-width));
-    top: calc(attr(data-pos-y em) - var(--border-width));
+    grid-column: 1;
 }
 
 .pin[style-not] {

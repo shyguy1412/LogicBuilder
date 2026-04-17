@@ -1,0 +1,41 @@
+.chip {
+    --border-width: max(1px, 0.05em);
+
+    box-sizing: border-box;
+
+    color: var(--clr-foreground-a0);
+    background-color: var(--clr-surface-a0);
+    border: var(--border-width) solid currentColor;
+
+    /* position: relative; */
+}
+
+.inputs, .outputs {
+    z-index: 2;
+    position: absolute;
+
+    display: grid;
+
+    top: 50%;
+    transform: translateY(-50%);
+
+    left: calc(-0.25em - var(--border-width));
+
+    min-height: calc(100% + var(--border-width) * 2);
+
+    grid-template-rows: auto;
+
+    align-items: center;
+}
+
+.outputs {
+    left: unset;
+    right: calc(-0.25em - var(--border-width));
+}
+
+.symbol {
+    position: relative;
+    font-size: 1.3em;
+    left: 0.5em;
+    top: 0.3em;
+}

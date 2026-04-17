@@ -6,10 +6,11 @@ import { Fragment, h } from 'preact';
 import { memo, useCallback, useMemo } from 'preact/compat';
 import { Lumber } from '@/lib/log/Lumber';
 import { Atom } from '@xstate/store';
+import { useChip } from '@/render/store/workspace';
 
 type Props = {
-    from: Atom<Point>;
-    to: Atom<Point>;
+    from: [number, number];
+    to: [number, number];
     onFromUpdate?: (from: Point) => void;
     onToUpdate?: (to: Point) => void;
     onDrag?: (to: Point) => void;
@@ -25,8 +26,45 @@ export const Wire = memo(({
 }: Props) => {
     Lumber.log(Lumber.RENDER, 'WIRE RENDER');
 
-    const [from, setFrom] = useAtom(props.from);
-    const [to, setTo] = useAtom(props.to);
+    const fromChip = useChip(props.from[0]);
+    const toChip = useChip(props.to[0]);
+
+    const [fromChipPos] = useAtom(fromChip.pos);
+    const [toChipPos] = useAtom(toChip.pos);
+
+    const from = useMemo(
+        () => {
+            const pinIndex = props.from[1] + 0;
+            const pinSpacing = Math.max(1, fromChip.height / fromChip.outputs);
+            const topOffset = fromChip.height / 2 -
+                pinSpacing * (fromChip.outputs - 1) / 2;
+
+            const fromPinOffset = pinIndex * pinSpacing + topOffset;
+
+            return {
+                x: fromChipPos.x + fromChip.width,
+                y: fromChipPos.y + fromPinOffset,
+            };
+        },
+        [fromChipPos, props.from[1]],
+    );
+
+    const to = useMemo(
+        () => {
+            const pinIndex = props.to[1] + 0;
+            const pinSpacing = Math.max(1, toChip.height / toChip.inputs);
+            const topOffset = toChip.height / 2 -
+                pinSpacing * (toChip.inputs - 1) / 2;
+
+            const toPinOffset = pinIndex * pinSpacing + topOffset;
+
+            return {
+                x: toChipPos.x,
+                y: toChipPos.y + toPinOffset,
+            };
+        },
+        [toChipPos, props.to],
+    );
 
     const [length, angle] = useMemo(
         () => [
@@ -36,50 +74,33 @@ export const Wire = memo(({
         [from, to],
     );
 
-    const onDrag = useCallback(
-        ((pos) => {
-            const delta = {
-                label: 'delta',
-                x: from.x - pos.x,
-                y: from.y - pos.y,
-            };
-            setFrom({
-                x: from.x - delta.x,
-                y: from.y - delta.y,
-            });
-            setTo({
-                x: to.x - delta.x,
-                y: to.y - delta.y,
-            });
-            props.onDrag?.(delta);
-        }) satisfies GridDraggable.Props['onDrag'],
-        [from, props.onDrag, setFrom, setTo],
-    );
-
     return (
         <>
-            <GridDraggable
+            {
+                /* <GridDraggable
                 width={1}
                 height={1}
                 pos={from}
                 class={style.handle}
                 style-wire-from
                 style-wire
-                onDrag={setFrom}
+                data-pin={props.from[1]}
+                // onDrag={setFrom}
                 onDragStop={onFromUpdate}
-            />
+            /> */
+            }
 
-            <GridDraggable
-                width={0}
-                height={0}
-                pos={from}
+            <div
+                data-pos-x={from.x}
+                data-pos-y={from.y}
                 data-wire-length={length}
                 data-wire-angle={angle}
                 class={style.wire}
                 style-wire
-                onDrag={onDrag}
+                // onDrag={onDrag}
             />
-
+            {
+                /*
             <GridDraggable
                 width={1}
                 height={1}
@@ -87,9 +108,11 @@ export const Wire = memo(({
                 class={style.handle}
                 style-wire-to
                 style-wire
-                onDrag={setTo}
+                data-pin={props.to[1]}
+                // onDrag={setTo}
                 onDragStop={onToUpdate}
-            />
+            /> */
+            }
         </>
     );
 });

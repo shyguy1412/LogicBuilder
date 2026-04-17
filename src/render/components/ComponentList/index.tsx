@@ -1,6 +1,5 @@
 import style from './ComponentList.module.css';
 import { DROP_GROUPS } from '@/render/components/App';
-import { Gate, LogicOperation } from '@/render/components/CircuitComponents/Gate';
 import { DragTarget } from '@/lib/components/DragNDrop';
 import { useConstant } from '@/lib/hooks';
 import { Lumber } from '@/lib/log/Lumber';
@@ -14,7 +13,8 @@ export const ComponentList = memo(() => {
 
     return (
         <div class={style.list}>
-            {Object.values(LogicOperation).map((op) => (
+            {
+                /* {Object.values(LogicOperation).map((op) => (
                 <DragTarget
                     key={op}
                     group={DROP_GROUPS.CIRCUIT_COMPONENT}
@@ -36,7 +36,8 @@ export const ComponentList = memo(() => {
                     >
                     </Gate>
                 </DragTarget>
-            ))}
+            ))} */
+            }
         </div>
     );
 });
